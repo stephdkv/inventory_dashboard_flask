@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма заявки на поставку</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Создание заявки</h1>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Главная</a></li>
+        <li><a href="{{ url_for('products_page') }}">Продукты</a></li>
+        <li><a href="{{ url_for('locations_page') }}">Категории</a></li>
+      </ul>
+    </nav>
+    <form method="POST">
+      {% for supplier in suppliers %}
+      <h2>{{ supplier.name }}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Продукт</th>
+            <th>Количество</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in supplier.products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>
+              <input
+                type="number"
+                step="any"
+                name="quantity_{{ supplier.id }}_{{ product.id }}"
+              />
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endfor %}
+      <button type="submit">Создать заявку</button>
+    </form>
+    <a href="{{ url_for('static', filename='orders.xlsx') }}" download
+      >Загрузить отчет</a
+    >
+  </body>
+</html>

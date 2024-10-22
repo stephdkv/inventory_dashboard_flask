@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Добавить продукт к поставщику</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Добавить продукт для поставщика: {{ supplier.name }}</h1>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Главная</a></li>
+        <li><a href="{{ url_for('suppliers_page') }}">Поставщики</a></li>
+      </ul>
+    </nav>
+    <form method="POST">
+      <select name="product" required>
+        <option value="" disabled selected>Выберите продукт</option>
+        {% for product in products %}
+        <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+      </select>
+
+      <select name="measurement" required>
+        <option value="" disabled selected>Выберите единицу измерения</option>
+        {% for measurement in measurements %}
+        <option value="{{ measurement.id }}">{{ measurement.name }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Добавить продукт</button>
+    </form>
+    <a href="{{ url_for('suppliers_page') }}">Назад к поставщикам</a>
+  </body>
+</html>

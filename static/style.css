@@ -109,6 +109,7 @@ th {
 .action-section {
   display: flex;
   gap: 5px;
+  align-items: center;
 }
 
 table,
