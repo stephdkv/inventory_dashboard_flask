@@ -1,5 +1,15 @@
 <form action="{{ url_for('register') }}" method="POST">
   {{ form.hidden_tag() }}
+
+  <!-- Вывод ошибок формы -->
+  {% for field, errors in form.errors.items() %}
+  <div class="alert alert-danger">
+    {% for error in errors %}
+    <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
   <div>
     {{ form.username.label }}<br />
     {{ form.username(size=32) }}

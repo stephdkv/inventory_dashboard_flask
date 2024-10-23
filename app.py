@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, abort
 from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
 from decorators import role_required
 from werkzeug.security import generate_password_hash
-
+from datetime import datetime
 
 import pandas as pd
 import os
@@ -63,23 +63,35 @@ def set_role(user_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+
+    # Проверим, проходит ли форма валидацию
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        role = form.role.data  # Получаем роль из формы
+        role = form.role.data  # Получаем выбранную роль
         
         # Хешируем пароль
-        hashed_password = generate_password_hash(password)
+        password_hash = generate_password_hash(password)
         
         # Создаем нового пользователя
-        new_user = User(username=username, password=hashed_password, role=role)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash('Пользователь успешно зарегистрирован!', 'success')
-        return redirect(url_for('login'))
+        new_user = User(username=username, password_hash=password_hash, role=role)
+        
+        try:
+            # Пробуем добавить пользователя в базу данных
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Пользователь успешно зарегистрирован!', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            # Если произошла ошибка — откатываем транзакцию и выводим сообщение об ошибке
+            db.session.rollback()
+            flash(f'Ошибка при создании пользователя: {str(e)}', 'danger')
+    else:
+        # Если валидация формы не прошла, выводим сообщение
+        flash('Пожалуйста, проверьте данные формы.', 'danger')
 
     return render_template('register.html', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -254,6 +266,7 @@ def remove_product_from_supplier(supplier_id, product_id):
 @app.route('/inventory', methods=['GET', 'POST'])
 def inventory_page():
     locations = Location.query.all()
+    current_date = datetime.now().strftime('%d.%m.%y')
 
     if request.method == 'POST':
         data = []
@@ -262,19 +275,54 @@ def inventory_page():
                 quantity = request.form.get(f'quantity_{product.id}')
                 if quantity:
                     data.append({
-                        'Product Name': product.name,
-                        'Location': product.location.name,
-                        'Measurement': product.measurement.name,
-                        'Quantity': float(quantity)
+                        'Название': product.name,
+                        'Расположение': product.location.name,
+                        'Ед. изм.': product.measurement.name,
+                        'Колличество': float(quantity)
                     })
 
         df = pd.DataFrame(data)
-        file_path = os.path.join('static', 'inventory.xlsx')
+        file_name = f'Инвентаризация_Ленина_{current_date}.xlsx'
+        file_path = os.path.join('static', file_name)
         df.to_excel(file_path, index=False)
 
         return redirect(url_for('inventory_page'))
 
-    return render_template('inventory.html', locations=locations)
+    return render_template('inventory.html', locations=locations, current_date=current_date)
+
+@app.route('/suppliers_orders', methods=['GET', 'POST'])
+def supplier_page():
+    suppliers = Supplier.query.all()
+    current_date = datetime.now().strftime('%d.%m')
+
+    if request.method == 'POST':
+        supplier_id = request.form.get('supplier_id')
+        supplier = Supplier.query.get(supplier_id)
+        
+        data = []
+        for product in supplier.products:
+            quantity = request.form.get(f'quantity_{product.id}')
+            if quantity:
+                data.append({
+                    'Название': product.name,
+                    'Ед. изм.': product.measurement.name,
+                    'Колличество': float(quantity)
+                })
+        
+
+        if data:
+            df = pd.DataFrame(data)
+            file_name = f'Заявка_{supplier.name}_{current_date}.xlsx'
+            file_path = os.path.join('static', file_name )
+            df.to_excel(file_path, index=False)
+
+        return redirect(url_for('supplier_page'))
+
+    return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date)
+
+@app.route('/download/<file_name>')
+def download_file(file_name):
+    return send_from_directory('static', file_name, as_attachment=True)
 
 @app.route('/suppliers/<int:supplier_id>/add_product', methods=['GET', 'POST'])
 def add_product_to_supplier(supplier_id):
