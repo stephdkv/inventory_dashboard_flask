@@ -20,7 +20,7 @@
     </style>
   </head>
   <body>
-    <h1>Инвентаризация</h1>
+    <h1>Инвентаризация для заведения: {{ establishment_name }}</h1>
     <nav>
       <ul>
         <li><a href="{{ url_for('index') }}">Главная</a></li>
@@ -68,16 +68,8 @@
             </table>
           </div>
           {% endfor %}
-          <button style="margin-top: 25px" type="submit">
-            Записать данные
-          </button>
+          <button style="margin-top: 25px" type="submit">Скачать отчет</button>
         </form>
-        <a
-          class="download-btn"
-          href="{{ url_for('download_file', file_name='Инвентаризация_Ленина_' ~ current_date ~ '.xlsx') }}"
-          download
-          >Загрузить отчет</a
-        >
       </div>
       <div>
         <div class="container">

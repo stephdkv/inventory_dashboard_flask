@@ -30,8 +30,8 @@
     </nav>
     <div style="display: flex; justify-content: space-evenly">
       <div style="width: 65%">
-        <form method="POST" action="{{ url_for('supplier_page') }}">
-          {% for supplier in suppliers %}
+        {% for supplier in suppliers %}
+        <form method="POST" action="{{ url_for('download_order') }}">
           <div class="action-section">
             <h1
               class="toggle-button"
@@ -60,6 +60,7 @@
                       type="number"
                       step="any"
                       name="quantity_{{ product.id }}"
+                      required
                     />
                   </td>
                 </tr>
@@ -73,19 +74,11 @@
               value="{{ supplier.id }}"
               style="margin-top: 25px"
             >
-              Записать данные
+              Скачать заявку
             </button>
-
-            <a
-              class="download-btn"
-              href="{{ url_for('download_file', file_name='Заявка_' ~ supplier.name ~ '_' ~ current_date ~ '.xlsx') }}"
-              download
-            >
-              Загрузить отчет
-            </a>
           </div>
-          {% endfor %}
         </form>
+        {% endfor %}
       </div>
       <div>
         <div class="container">

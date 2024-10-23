@@ -2,25 +2,23 @@
     <tr>
         <th>Имя пользователя</th>
         <th>Текущая роль</th>
+        <th>Текущее заведение</th>
         <th>Изменить роль</th>
     </tr>
     {% for user in users %}
     <tr>
         <td>{{ user.username }}</td>
         <td>{{ user.role }}</td>
+        <td>{{ establishments[user.establishment_id] }}</td>
         <td>
             <form action="{{ url_for('set_role', user_id=user.id) }}" method="POST">
                 <select name="role">
-                    <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
                     <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                    <option value="пицца лб" {% if user.role == 'пицца лб' %}selected{% endif %}>Пицца ЛБ</option>
-                    <option value="сушист лб" {% if user.role == 'сушист лб' %}selected{% endif %}>Сушист ЛБ</option>
-                    <option value="повар лб" {% if user.role == 'повар лб' %}selected{% endif %}>Повар ЛБ</option>
-                    <option value="старший лб" {% if user.role == 'старший лб' %}selected{% endif %}>Старший ЛБ</option>
-                    <option value="повар пб" {% if user.role == 'повар пб' %}selected{% endif %}>Повар ПБ</option>
-                    <option value="сушист пб" {% if user.role == 'сушист пб' %}selected{% endif %}>Сушист ПБ</option>
-                    <option value="старший пб" {% if user.role == 'старший пб' %}selected{% endif %}>Старший ПБ</option>
-                    <option value="пицца пб" {% if user.role == 'пицца пб' %}selected{% endif %}>Пицца ПБ</option>
+                    <option value="пицца" {% if user.role == 'пицца' %}selected{% endif %}>Пицца</option>
+                    <option value="сушист" {% if user.role == 'сушист' %}selected{% endif %}>Сушист</option>
+                    <option value="повар" {% if user.role == 'повар' %}selected{% endif %}>Повар</option>
+                    <option value="старший" {% if user.role == 'старший' %}selected{% endif %}>Старший</option>
+            
                 </select>
                 <button type="submit">Изменить</button>
             </form>
