@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Продукты</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      .product-table {
+        display: none; /* Скрываем таблицу по умолчанию */
+        margin-top: 10px; /* Отступ сверху для таблицы */
+      }
+      .toggle-button {
+        cursor: pointer; /* Изменяем курсор на указатель для интерактивности */
+        color: blue; /* Цвет текста для удобства */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Продукты:</h1>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Главная</a></li>
+        <li><a href="{{ url_for('locations_page') }}">Категории</a></li>
+        <li><a href="{{ url_for('inventory_page') }}">Инвентаризация</a></li>
+      </ul>
+    </nav>
+    <form method="POST">
+      <input
+        type="text"
+        name="product"
+        placeholder="Введите название продукта"
+        required
+      />
+      <select name="location" required>
+        <option value="" disabled selected>Выбрать категорию</option>
+        {% for location in locations %}
+        <option value="{{ location.id }}">{{ location.name }}</option>
+        {% endfor %}
+      </select>
+      <select name="measurement" required>
+        <option value="" disabled selected>Выбрать ед. изм.</option>
+        {% for measurement in measurements %}
+        <option value="{{ measurement.id }}">{{ measurement.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Добавить продукт</button>
+    </form>
+
+    {% for location in locations %}
+    <div class="action-section">
+      <h1 class="toggle-button" onclick="toggleProducts({{ location.id }})">
+        {{ location.name }}
+      </h1>
+    </div>
+    <div id="products-{{ location.id }}" class="product-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Название продукта</th>
+            <th>Единица измерения</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in location.products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.measurement.name }}</td>
+
+            <td class="action-section">
+              <a
+                class="edit-button"
+                href="{{ url_for('edit_product', product_id=product.id) }}"
+                >Ред.</a
+              >
+              <form
+                action="{{ url_for('delete_product', product_id=product.id) }}"
+                method="POST"
+              >
+                <button
+                  class="delete-btn"
+                  type="submit"
+                  onclick="return confirm('Are you sure you want to delete this product?')"
+                >
+                  Удалить
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endfor %}
+  </body>
+  <script>
+    function toggleProducts(locationId) {
+      const productsTable = document.getElementById(`products-${locationId}`);
+      if (
+        productsTable.style.display === "none" ||
+        productsTable.style.display === ""
+      ) {
+        productsTable.style.display = "block"; // Показываем таблицу
+      } else {
+        productsTable.style.display = "none"; // Скрываем таблицу
+      }
+    }
+  </script>
+</html>
