@@ -153,7 +153,14 @@ def products_page():
 
 @app.route('/locations', methods=['GET', 'POST'])
 def locations_page():
+    username = current_user.username
+    role = current_user.role.capitalize()
     establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
+
     if request.method == 'POST':
         location_name = request.form.get('location')
         if location_name:
@@ -162,10 +169,17 @@ def locations_page():
             db.session.commit()
             return redirect(url_for('locations_page'))
     locations = Location.query.filter_by(establishment_id=establishment_id).all()
-    return render_template('locations.html', locations=locations)
+    return render_template('locations.html', locations=locations, username=username, role=role, establishment_name=establishment_name)
 
 @app.route('/suppliers', methods=['GET', 'POST'])
 def suppliers_page():
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
     if request.method == 'POST':
         supplier_name = request.form.get('supplier')
         if supplier_name:
@@ -175,7 +189,7 @@ def suppliers_page():
             return redirect(url_for('suppliers_page'))
 
     suppliers = Supplier.query.all()
-    return render_template('suppliers.html', suppliers=suppliers)
+    return render_template('suppliers.html', suppliers=suppliers, establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/products/<int:product_id>/edit', methods=['GET', 'POST'])
 def edit_product(product_id):

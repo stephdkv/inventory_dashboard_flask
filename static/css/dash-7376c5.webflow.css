@@ -1267,7 +1267,16 @@ figcaption {
   line-height: 1em;
   transition: color 0.3s;
 }
-
+.dashdark-custom-icon.delete-icon-product-supplier {
+  cursor: pointer;
+  line-height: 1em;
+  transition: color 0.3s;
+  background-color: var(--neutral--900);
+  color: var(--accent--primary-1);
+}
+.dashdark-custom-icon.delete-icon-product-supplier:hover {
+  color: var(--system--300);
+}
 .dashdark-custom-icon.delete-icon:hover {
   color: var(--system--300);
 }
