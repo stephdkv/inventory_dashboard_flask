@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование продукта</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Редактирование продукта</h1>
+    <form method="POST">
+        <input type="text" name="product" placeholder="Название" value="{{ product.name }}" required>
+        <select name="location" required>
+            {% for location in locations %}
+                <option value="{{ location.id }}" {% if location.id == product.location_id %} selected {% endif %}>{{ location.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="measurement" required>
+            {% for measurement in measurements %}
+                <option value="{{ measurement.id }}" {% if measurement.id == product.measurement_id %} selected {% endif %}>{{ measurement.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>
+
