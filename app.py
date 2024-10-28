@@ -196,6 +196,13 @@ def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     locations = Location.query.all()
     measurements = Measurement.query.all()
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
 
     if request.method == 'POST':
         product.name = request.form.get('product')
@@ -204,18 +211,25 @@ def edit_product(product_id):
         db.session.commit()
         return redirect(url_for('products_page'))
 
-    return render_template('edit_product.html', product=product, locations=locations, measurements=measurements)
+    return render_template('edit_product.html', product=product, locations=locations, measurements=measurements, establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/locations/<int:location_id>/edit', methods=['GET', 'POST'])
 def edit_location(location_id):
     location = Location.query.get_or_404(location_id)
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
 
     if request.method == 'POST':
         location.name = request.form.get('location')
         db.session.commit()
         return redirect(url_for('locations_page'))
 
-    return render_template('edit_location.html', location=location)
+    return render_template('edit_location.html', location=location,  establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/suppliers/<int:supplier_id>/edit', methods=['GET', 'POST'])
 def edit_supplier(supplier_id):
