@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Инвентаризация</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      .product-table {
+        display: none; /* Скрываем таблицу по умолчанию */
+        margin-top: 10px; /* Отступ сверху для таблицы */
+      }
+      .toggle-button {
+        cursor: pointer; /* Изменяем курсор на указатель для интерактивности */
+        color: blue; /* Цвет текста для удобства */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Инвентаризация для заведения: {{ establishment_name }}</h1>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Главная</a></li>
+        <li><a href="{{ url_for('products_page') }}">Продукты</a></li>
+        <li><a href="{{ url_for('locations_page') }}">Категории</a></li>
+      </ul>
+    </nav>
+    <div style="display: flex; justify-content: space-evenly">
+      <div style="width: 65%">
+        <form method="POST">
+          {% for location in locations %}
+          <div class="action-section">
+            <h1
+              class="toggle-button"
+              onclick="toggleProducts({{ location.id }})"
+            >
+              {{ location.name }}
+            </h1>
+          </div>
+          <div id="products-{{ location.id }}" class="product-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Название</th>
+                  <th>Ед. изм.</th>
+                  <th>Количество</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in location.products %}
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.measurement.name }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      step="any"
+                      name="quantity_{{ product.id }}"
+                      required
+                    />
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+          <button style="margin-top: 25px" type="submit">Скачать отчет</button>
+        </form>
+      </div>
+      <div>
+        <div class="container">
+          <input type="text" class="display" />
+
+          <div class="buttons">
+            <button class="operator" data-value="AC">AC</button>
+            <button class="operator" data-value="DEL">DEL</button>
+            <button class="operator" data-value="%">%</button>
+            <button class="operator" data-value="/">/</button>
+
+            <button data-value="7">7</button>
+            <button data-value="8">8</button>
+            <button data-value="9">9</button>
+            <button class="operator" data-value="*">*</button>
+
+            <button data-value="4">4</button>
+            <button data-value="5">5</button>
+            <button data-value="6">6</button>
+            <button class="operator" data-value="-">-</button>
+
+            <button data-value="1">1</button>
+            <button data-value="2">2</button>
+            <button data-value="3">3</button>
+            <button class="operator" data-value="+">+</button>
+
+            <button data-value="0">0</button>
+            <button data-value="00">00</button>
+            <button data-value=".">.</button>
+            <button class="operator" data-value="=">=</button>
+          </div>
+        </div>
+
+        <script>
+          function toggleProducts(locationId) {
+            const productsTable = document.getElementById(
+              `products-${locationId}`
+            );
+            if (
+              productsTable.style.display === "none" ||
+              productsTable.style.display === ""
+            ) {
+              productsTable.style.display = "block"; // Показываем таблицу
+            } else {
+              productsTable.style.display = "none"; // Скрываем таблицу
+            }
+          }
+        </script>
+      </div>
+    </div>
+  </body>
+</html>

@@ -308,6 +308,8 @@ def inventory_page():
     establishment_id = current_user.establishment_id
     locations = Location.query.filter_by(establishment_id=establishment_id).all()
     current_date = datetime.now().strftime('%d.%m.%y')
+    username = current_user.username
+    role = current_user.role.capitalize()
     if establishment_id == 1:
         establishment_name = "Лукашевича"
     else:
@@ -333,7 +335,7 @@ def inventory_page():
 
         return redirect(url_for('download_file', file_name=file_name))
 
-    return render_template('inventory.html', locations=locations, current_date=current_date, establishment_name=establishment_name)
+    return render_template('inventory.html', locations=locations, current_date=current_date, establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/download/<file_name>')
 @login_required
@@ -351,6 +353,7 @@ def download_order():
     supplier_id = request.form.get('supplier_id')
     supplier = Supplier.query.get(supplier_id)
     establishment_id = current_user.establishment_id
+    
     if establishment_id == 1:
         establishment_name = "Лукашевича"
     else:
@@ -388,7 +391,14 @@ def download_order():
 def supplier_page():
     suppliers = Supplier.query.all()
     current_date = datetime.now().strftime('%d.%m')
-    return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date)
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
+    return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date, establishment_name=establishment_name, username=username, role=role)
 
 @app.route('/suppliers/<int:supplier_id>/add_product', methods=['GET', 'POST'])
 def add_product_to_supplier(supplier_id):
