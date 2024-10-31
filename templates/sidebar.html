@@ -1,0 +1,263 @@
+<div
+  data-w-id="8902ab60-ff18-1ad1-7b19-201b504196ac"
+  data-animation="over-right"
+  data-collapse="medium"
+  data-duration="400"
+  data-easing="ease"
+  data-easing2="ease"
+  role="banner"
+  class="sidebar-wrapper w-nav"
+>
+  <div class="overflow-hidden">
+    <div class="sidebar-logo-section-container">
+      <a
+        style="max-width: 80%"
+        href="index.html"
+        class="sidebar-logo-link w-nav-brand"
+        ><img
+          src="/static/images/knockandroll_color_2.svg"
+          loading="eager"
+          alt="Dashdark X Webflow Template - Logo"
+      /></a>
+      <div
+        data-w-id="8902ab60-ff18-1ad1-7b19-201b504196b1"
+        class="sidebar-collapsed-icon-btn-wrapper"
+      >
+        <div class="sidebar-collapsed-icon-btn">
+          <img
+            src="/static/images/untitled.svg"
+            loading="eager"
+            alt="Dashdark X Webflow Template - Icon"
+          />
+        </div>
+      </div>
+      <div
+        data-w-id="8902ab60-ff18-1ad1-7b19-201b504196b4"
+        class="sidebar-collapse-icon-container"
+      >
+        <img
+          src="/static/images/sidebar-collapse-icon-dashdark-webflow-template.svg"
+          loading="eager"
+          alt=""
+        />
+      </div>
+    </div>
+    <div class="sidebar-collapsed-divider"></div>
+    <form action="/search" class="sidebar-search-wrapper w-form">
+      <input
+        class="input icon-inside-left w-input"
+        maxlength="256"
+        name="query"
+        placeholder="Искать..."
+        type="search"
+        id="search"
+        required=""
+      /><input type="submit" class="btn-inside-input-left w-button" value="" />
+    </form>
+    <div class="position-relative---z-index-1 logo-and-icon-mobile-container">
+      <nav role="navigation" class="sidebar-menu-container w-nav-menu">
+        <div class="sidebar-menu-collapsed-overlay"></div>
+        <div
+          data-hover="false"
+          data-delay="0"
+          data-w-id="8902ab60-ff18-1ad1-7b19-201b504196bd"
+          class="dropdown-wrapper sidebar-dropdown w-dropdown"
+        >
+          <div class="dropdown-toggle sidebar-dropdown w-dropdown-toggle">
+            <div class="flex">
+              <div class="dashdark-custom-icon sidebar-link-icon"></div>
+              <div class="text-200 sidebar-dropdown-text">Инвентаризация</div>
+            </div>
+            <div class="line-rounded-icon sidebar-dropdown-arrow"></div>
+          </div>
+          <nav class="sidebar-dropdown-list-wrapper w-dropdown-list">
+            <div class="sidebar-dropdown-inner-wrapper">
+              <a
+                href="{{ url_for('products_page') }}"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Продукты</a
+              >
+              <a
+                href="{{ url_for('locations_page') }}"
+                aria-current="page"
+                class="sidebar-dropdown-link w-dropdown-link w--current"
+                >Категории</a
+              >
+              <a
+                href="{{ url_for('inventory_page') }}"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Инвентаризация</a
+              >
+            </div>
+          </nav>
+        </div>
+        <div
+          data-hover="false"
+          data-delay="0"
+          data-w-id="8902ab60-ff18-1ad1-7b19-201b504196ce"
+          class="dropdown-wrapper sidebar-dropdown w-dropdown"
+        >
+          <div class="dropdown-toggle sidebar-dropdown w-dropdown-toggle">
+            <div class="flex">
+              <div class="dashdark-custom-icon sidebar-link-icon"></div>
+              <div class="text-200 sidebar-dropdown-text">Поставщики</div>
+            </div>
+            <div class="line-rounded-icon sidebar-dropdown-arrow"></div>
+          </div>
+          <nav class="sidebar-dropdown-list-wrapper w-dropdown-list">
+            <div class="sidebar-dropdown-inner-wrapper">
+              <a
+                href="{{ url_for('suppliers_page') }}"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Все Поставщики</a
+              >
+              <a
+                href="{{ url_for('supplier_page') }}"
+                aria-current="page"
+                class="sidebar-dropdown-link w-dropdown-link w--current"
+                >Сделать заявку</a
+              >
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div
+          data-hover="false"
+          data-delay="0"
+          data-w-id="8902ab60-ff18-1ad1-7b19-201b50419758"
+          class="dropdown-wrapper sidebar-dropdown w-dropdown"
+        >
+          <div class="dropdown-toggle sidebar-dropdown w-dropdown-toggle">
+            <div class="flex">
+              <div class="dashdark-custom-icon sidebar-link-icon"></div>
+              <div class="text-200 sidebar-dropdown-text">Настройки</div>
+            </div>
+            <div class="line-rounded-icon sidebar-dropdown-arrow"></div>
+          </div>
+          <nav class="sidebar-dropdown-list-wrapper w-dropdown-list">
+            <div class="sidebar-dropdown-inner-wrapper">
+              <a
+                href="coming-soon.html"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >All pages</a
+              >
+              <a
+                href="coming-soon.html"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Settings V1</a
+              >
+              <a
+                href="coming-soon.html"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Settings V2</a
+              >
+              <a
+                href="coming-soon.html"
+                class="sidebar-dropdown-link w-dropdown-link"
+                >Settings V3</a
+              >
+            </div>
+          </nav>
+        </div>
+
+        <div
+          data-hover="false"
+          data-delay="0"
+          data-w-id="8902ab60-ff18-1ad1-7b19-201b5041977e"
+          class="dropdown-wrapper sidebar-dropdown w-dropdown"
+        >
+          <div class="dropdown-toggle sidebar-dropdown w-dropdown-toggle">
+            <div class="flex align-center gap-column-8px">
+              <img
+                src="/static/images/john-carter-sidebar-avatar-dashdark-webflow-ecommerce-template.jpg"
+                loading="eager"
+                sizes="(max-width: 991px) 100vw, (max-width: 1439px) 32px, (max-width: 1919px) 2vw, 32px"
+                srcset="
+                  /static/images/john-carter-sidebar-avatar-dashdark-webflow-ecommerce-template-p-500.jpg 500w,
+                  /static/images/john-carter-sidebar-avatar-dashdark-webflow-ecommerce-template.jpg       600w
+                "
+                alt="John Carter - Dashdark X Webflow Template"
+                class="avatar-circle _01"
+              />
+              <div class="sidebar-user-text-container">
+                <div class="text-200 sidebar-dropdown-text color-neutral-100">
+                  {{ username }}
+                </div>
+                <div class="text-100 sidebar-dropdown-text color-neutral-400">
+                  {{ role }} {{ establishment_name }}
+                </div>
+              </div>
+            </div>
+            <div class="line-rounded-icon sidebar-dropdown-arrow"></div>
+          </div>
+          <nav
+            class="sidebar-dropdown-list-wrapper sidebar-account-settings-list w-dropdown-list"
+          >
+            <div class="flex-vertical">
+              <div class="grid-1-column gap-row-16px">
+                <a
+                  id="w-node-_8902ab60-ff18-1ad1-7b19-201b5041978c-504196ac"
+                  href="coming-soon.html"
+                  class="font-icon-left-link w-inline-block"
+                >
+                  <div class="dashdark-custom-icon"></div>
+                  <div class="text-100 medium">Профиль</div>
+                </a>
+                <a
+                  id="w-node-_8902ab60-ff18-1ad1-7b19-201b50419791-504196ac"
+                  href="coming-soon.html"
+                  class="font-icon-left-link w-inline-block"
+                >
+                  <div class="dashdark-custom-icon"></div>
+                  <div class="text-100 medium">Настройи профиля</div>
+                </a>
+                <a
+                  id="w-node-_8902ab60-ff18-1ad1-7b19-201b50419796-504196ac"
+                  href="coming-soon.html"
+                  class="font-icon-left-link w-inline-block"
+                >
+                  <div class="dashdark-custom-icon"></div>
+                  <div class="text-100 medium">Уведомления</div>
+                </a>
+              </div>
+              <div class="sidebar-account-settings-divider"></div>
+              <div class="grid-1-column gap-row-16px">
+                <a
+                  id="w-node-_8902ab60-ff18-1ad1-7b19-201b504197a7-504196ac"
+                  href="{{ url_for('logout')}}"
+                  class="font-icon-left-link color-red-300 w-inline-block"
+                >
+                  <div class="dashdark-custom-icon"></div>
+                  <div class="text-100 medium">Выйти</div>
+                </a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </nav>
+      <a href="#" class="sidebar-logo-link show-on-tablet w-nav-brand"
+        ><img
+          src="/static/images/knockandroll_color_2.svg"
+          loading="eager"
+          alt="Dashdark X Webflow Template - Logo"
+      /></a>
+      <div class="hamburger-menu-wrapper w-nav-button">
+        <div class="sidebar-mobile-menu-icon-wrapper">
+          <img
+            src="/static/images/sidebar-mobile-collapse-icon-left-dashdark-webflow-template.svg"
+            loading="eager"
+            alt=""
+            class="sidebar-mobile-menu-icon left"
+          /><img
+            src="/static/images/sidebar-mobile-collapse-icon-right-dashdark-webflow-template.svg"
+            loading="eager"
+            alt=""
+            class="sidebar-mobile-menu-icon right"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

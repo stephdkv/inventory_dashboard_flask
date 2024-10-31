@@ -225,7 +225,6 @@ def edit_location(location_id):
         establishment_name = 'Ленина'
 
     if request.method == 'POST':
-        location.name = request.form.get('location')
         db.session.commit()
         return redirect(url_for('locations_page'))
 
@@ -403,7 +402,7 @@ def supplier_page():
 @app.route('/suppliers/<int:supplier_id>/add_product', methods=['GET', 'POST'])
 def add_product_to_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
-    products = Product.query.all()
+    products = Product.query.group_by(Product.name).all()
     measurements = Measurement.query.all()
 
     if request.method == 'POST':
