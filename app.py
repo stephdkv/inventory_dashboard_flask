@@ -1,15 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, DishForm
 from decorators import role_required
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from datetime import datetime
 
 import pandas as pd
 import os
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.secret_key = 'sfkmskjnkj2kj4n234j'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -443,6 +445,43 @@ def order_page():
         return redirect(url_for('order_page'))
 
     return render_template('order_form.html', suppliers=suppliers)
+
+# Главная страница со списком блюд
+@app.route('/dishes')
+def dishes():
+    all_dishes = Dish.query.all()
+    return render_template('dishes.html', dishes=all_dishes)
+
+# Страница для отдельного блюда
+@app.route('/dishes/<int:dish_id>')
+def dish_detail(dish_id):
+    dish = Dish.query.get_or_404(dish_id)
+    return render_template('dish_detail.html', dish=dish)
+
+# Страница добавления нового блюда
+@app.route('/dishes/new', methods=['GET', 'POST'])
+def new_dish():
+    form = DishForm()
+    if form.validate_on_submit():
+        filename = None
+        if form.image.data:
+            filename = secure_filename(form.image.data.filename)
+            form.image.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        # Создаем новое блюдо
+        new_dish = Dish(
+            name=form.name.data,
+            image_url=url_for('static', filename=f'uploads/{filename}') if filename else None,
+            preparation_steps=form.preparation_steps.data,
+            video_url=form.video_url.data
+        )
+        
+        db.session.add(new_dish)
+        db.session.commit()
+        flash('Блюдо успешно добавлено!', 'success')
+        return redirect(url_for('dishes'))
+    
+    return render_template('new_dish.html', form=form)
 
 
 

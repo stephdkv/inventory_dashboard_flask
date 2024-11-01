@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Добавить новое блюдо</h1>
+    <form method="post" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+      <p>{{ form.name.label }} {{ form.name(size=32) }}</p>
+      <p>{{ form.image.label }} {{ form.image() }}</p>
+      <p>
+        {{ form.preparation_steps.label }} {{ form.preparation_steps(rows=5) }}
+      </p>
+      <p>{{ form.video_url.label }} {{ form.video_url(size=64) }}</p>
+      <button type="submit">Добавить блюдо</button>
+    </form>
+  </body>
+</html>

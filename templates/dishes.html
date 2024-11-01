@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Список блюд</h1>
+    <a href="{{ url_for('new_dish') }}">Добавить новое блюдо</a>
+    <ul>
+      {% for dish in dishes %}
+      <li>
+        <a href="{{ url_for('dish_detail', dish_id=dish.id) }}"
+          >{{ dish.name }}</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>{{ dish.name }}</h1>
+    <img
+      src="{{ dish.image_url }}"
+      alt="{{ dish.name }}"
+      style="max-width: 200px"
+    />
+    <p>{{ dish.preparation_steps }}</p>
+    {% if dish.video_url %}
+    <p>
+      Видео приготовления:
+      <a href="{{ dish.video_url }}" target="_blank">Смотреть</a>
+    </p>
+    {% endif %}
+    <h2>Ингредиенты</h2>
+    <ul>
+      {% for ingredient in dish.ingredients %}
+      <li>{{ ingredient.product.name }} - {{ ingredient.quantity }}</li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('dishes') }}">Назад к списку блюд</a>
+  </body>
+</html>

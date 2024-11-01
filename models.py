@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -83,6 +84,31 @@ supplier_product = db.Table('supplier_product',
     db.Column('supplier_id', db.Integer, db.ForeignKey('suppliers.id'), primary_key=True),  # исправлено на 'suppliers.id'
     db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True)  # исправлено на 'products.id'
 )
+
+class Dish(db.Model):
+    __tablename__ = 'dishes'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    image_url = db.Column(db.String(200), nullable=True)  # URL изображения
+    preparation_steps = db.Column(db.Text, nullable=True)  # Шаги приготовления
+    video_url = db.Column(db.String(200), nullable=True)  # Опциональное видео
+    
+    # Дата создания блюда
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Связь с продуктами
+    ingredients = db.relationship('DishProduct', back_populates='dish')
+    
+class DishProduct(db.Model):
+    __tablename__ = 'dish_products'
+    id = db.Column(db.Integer, primary_key=True)
+    dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    quantity = db.Column(db.Float, nullable=False)  # Количество продукта в рецепте
+    
+    # Связи
+    dish = db.relationship('Dish', back_populates='ingredients')
+    product = db.relationship('Product', backref=db.backref('dish_products', lazy=True))
 
 # Добавляем захардкоженные единицы измерения при первом запуске
 def add_default_measurements():

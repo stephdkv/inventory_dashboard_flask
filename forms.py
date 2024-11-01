@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, SelectField, FileField, FloatField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, EqualTo,  Optional
+from wtforms_sqlalchemy.fields import QuerySelectField
+from models import Product
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired(), Length(min=4, max=25)])
@@ -23,3 +25,13 @@ class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired(), Length(min=4, max=25)])
     password = PasswordField('Пароль', validators=[DataRequired()])
     submit = SubmitField('Войти')
+
+class DishForm(FlaskForm):
+    name = StringField('Название блюда', validators=[DataRequired()])
+    image = FileField('Фото блюда', validators=[Optional()])
+    preparation_steps = TextAreaField('Технология приготовления', validators=[Optional()])
+    video_url = StringField('Ссылка на видео', validators=[Optional()])
+    
+    # Поля для выбора продуктов и указания их количества
+    product = QuerySelectField('Продукт', query_factory=lambda: Product.query.all(), allow_blank=True)
+    quantity = FloatField('Количество', validators=[Optional()])
