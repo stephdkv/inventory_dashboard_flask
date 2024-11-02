@@ -7,7 +7,7 @@
   </head>
   <body>
     <h1>Список блюд</h1>
-    <a href="{{ url_for('new_dish') }}">Добавить новое блюдо</a>
+
     <ul>
       {% for dish in dishes %}
       <li>
@@ -17,5 +17,6 @@
       </li>
       {% endfor %}
     </ul>
+    <a href="{{ url_for('add_dish') }}">Добавить новое блюдо</a>
   </body>
 </html>

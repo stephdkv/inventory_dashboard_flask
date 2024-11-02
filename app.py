@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, DishIngredient 
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from forms import LoginForm, RegistrationForm, DishForm
+from forms import LoginForm, RegistrationForm
 from decorators import role_required
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -447,41 +447,48 @@ def order_page():
     return render_template('order_form.html', suppliers=suppliers)
 
 # Главная страница со списком блюд
-@app.route('/dishes')
+@app.route('/dishes', methods=['GET'])
 def dishes():
-    all_dishes = Dish.query.all()
-    return render_template('dishes.html', dishes=all_dishes)
+    dishes = Dish.query.all()
+    return render_template('dishes.html', dishes=dishes)
 
-# Страница для отдельного блюда
-@app.route('/dishes/<int:dish_id>')
+@app.route('/dishes/<int:dish_id>', methods=['GET'])
 def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     return render_template('dish_detail.html', dish=dish)
 
+
 # Страница добавления нового блюда
-@app.route('/dishes/new', methods=['GET', 'POST'])
-def new_dish():
-    form = DishForm()
-    if form.validate_on_submit():
-        filename = None
-        if form.image.data:
-            filename = secure_filename(form.image.data.filename)
-            form.image.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+@app.route('/dishes/add', methods=['GET', 'POST'])
+def add_dish():
+    products = Product.query.all()
+    measurements = Measurement.query.all()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        image = request.form.get('image')
+        video_url = request.form.get('video_url')
+        preparation_steps = request.form.getlist('preparation_steps')
+        ingredient_data = request.form.getlist('ingredient')
         
-        # Создаем новое блюдо
-        new_dish = Dish(
-            name=form.name.data,
-            image_url=url_for('static', filename=f'uploads/{filename}') if filename else None,
-            preparation_steps=form.preparation_steps.data,
-            video_url=form.video_url.data
-        )
+        if not name or not preparation_steps:
+            flash("Пожалуйста, заполните все обязательные поля.")
+            return redirect(url_for('add_dish'))
         
-        db.session.add(new_dish)
+        dish = Dish(name=name, image=image, video_url=video_url, preparation_steps='\n'.join(preparation_steps))
+        for data in ingredient_data:
+            product_id, quantity, measurement_id = data.split(',')
+            ingredient = DishIngredient(product_id=int(product_id), quantity=float(quantity), measurement_id=int(measurement_id))
+            dish.ingredients.append(ingredient)
+
+        db.session.add(dish)
         db.session.commit()
-        flash('Блюдо успешно добавлено!', 'success')
+        
+        flash("Блюдо успешно добавлено!")
         return redirect(url_for('dishes'))
     
-    return render_template('new_dish.html', form=form)
+    return render_template('add_dish.html', products=products, measurements=measurements)
+
 
 
 

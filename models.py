@@ -97,18 +97,19 @@ class Dish(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Связь с продуктами
-    ingredients = db.relationship('DishProduct', back_populates='dish')
+    ingredients = db.relationship('DishIngredient', back_populates='dish')
     
-class DishProduct(db.Model):
+class DishIngredient(db.Model):
     __tablename__ = 'dish_products'
     id = db.Column(db.Integer, primary_key=True)
     dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Float, nullable=False)  # Количество продукта в рецепте
-    
+    measurement_id = db.Column(db.Integer, db.ForeignKey('measurement.id'), nullable=False)
     # Связи
     dish = db.relationship('Dish', back_populates='ingredients')
     product = db.relationship('Product', backref=db.backref('dish_products', lazy=True))
+    measurement = db.relationship('Measurement')
 
 # Добавляем захардкоженные единицы измерения при первом запуске
 def add_default_measurements():

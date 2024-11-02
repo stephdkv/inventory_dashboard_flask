@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Добавить новое блюдо</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <label>Название блюда:</label>
+      <input type="text" name="name" required />
+
+      <label>Ссылка на изображение:</label>
+      <input type="url" name="image_url" />
+
+      <label>Технология приготовления (по пунктам):</label>
+      <textarea name="preparation_steps" required></textarea>
+
+      <label>Ссылка на видео (опционально):</label>
+      <input type="url" name="video_url" />
+
+      <h3>Ингредиенты:</h3>
+      {% for product in products %}
+      <select name="product" required>
+        <option value="" disabled selected>Выберите продукт</option>
+        {% for product in products %}
+        <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="number" name="quantity_{{ product.id }}" step="0.01" />
+      <div>
+        <label
+          >{{ product.name }} ({{ measurements[product.measurement_id - 1].name
+          }}):</label
+        >
+        <input type="number" name="quantity_{{ product.id }}" step="0.01" />
+      </div>
+      {% endfor %}
+
+      <button type="submit">Добавить блюдо</button>
+    </form>
+  </body>
+</html>

@@ -7,24 +7,20 @@
   </head>
   <body>
     <h1>{{ dish.name }}</h1>
-    <img
-      src="{{ dish.image_url }}"
-      alt="{{ dish.name }}"
-      style="max-width: 200px"
-    />
+    <img src="{{ dish.image_url }}" alt="{{ dish.name }}" />
+    <p><strong>Технология приготовления:</strong></p>
     <p>{{ dish.preparation_steps }}</p>
+
     {% if dish.video_url %}
-    <p>
-      Видео приготовления:
-      <a href="{{ dish.video_url }}" target="_blank">Смотреть</a>
-    </p>
+    <p><strong>Видео:</strong></p>
+    <iframe src="{{ dish.video_url }}" width="560" height="315"></iframe>
     {% endif %}
-    <h2>Ингредиенты</h2>
+
+    <h3>Ингредиенты:</h3>
     <ul>
-      {% for ingredient in dish.ingredients %}
-      <li>{{ ingredient.product.name }} - {{ ingredient.quantity }}</li>
+      {% for product in dish.products %}
+      <li>{{ product.name }} - {{ dish_products.quantity }}</li>
       {% endfor %}
     </ul>
-    <a href="{{ url_for('dishes') }}">Назад к списку блюд</a>
   </body>
 </html>

@@ -32,6 +32,11 @@ class DishForm(FlaskForm):
     preparation_steps = TextAreaField('Технология приготовления', validators=[Optional()])
     video_url = StringField('Ссылка на видео', validators=[Optional()])
     
-    # Поля для выбора продуктов и указания их количества
-    product = QuerySelectField('Продукт', query_factory=lambda: Product.query.all(), allow_blank=True)
+class ProductQuantityForm(FlaskForm):
+    product = QuerySelectField(
+        'Продукт',
+        query_factory=lambda: Product.query.group_by(Product.name).all(),
+        allow_blank=True,
+        get_label='name'
+    )
     quantity = FloatField('Количество', validators=[Optional()])
