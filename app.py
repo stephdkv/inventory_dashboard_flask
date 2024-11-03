@@ -461,13 +461,26 @@ def dish_detail(dish_id):
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
 def add_dish():
-    products = Product.query.all()
+    products = Product.query.group_by(Product.name).all()
     measurements = Measurement.query.all()
     
     if request.method == 'POST':
         name = request.form.get('name')
-        image = request.form.get('image')
-        video_url = request.form.get('video_url')
+        image_file = request.files['image_file']
+        image_path = None
+        if image_file:
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(image_path)
+
+        # Обработка загруженного видео
+        video_file = request.files['video_file']
+        video_path = None
+        if video_file:
+            filename = secure_filename(video_file.filename)
+            video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            video_file.save(video_path)
+
         preparation_steps = request.form.getlist('preparation_steps')
         ingredient_data = request.form.getlist('ingredient')
         
@@ -475,7 +488,7 @@ def add_dish():
             flash("Пожалуйста, заполните все обязательные поля.")
             return redirect(url_for('add_dish'))
         
-        dish = Dish(name=name, image=image, video_url=video_url, preparation_steps='\n'.join(preparation_steps))
+        dish = Dish(name=name, image=image_file, video_url=video_file, preparation_steps='\n'.join(preparation_steps))
         for data in ingredient_data:
             product_id, quantity, measurement_id = data.split(',')
             ingredient = DishIngredient(product_id=int(product_id), quantity=float(quantity), measurement_id=int(measurement_id))

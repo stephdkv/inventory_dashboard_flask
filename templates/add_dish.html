@@ -12,13 +12,13 @@
       <input type="text" name="name" required />
 
       <label>Ссылка на изображение:</label>
-      <input type="url" name="image_url" />
+      <input type="file" name="image_file" accept="image/*" />
 
       <label>Технология приготовления (по пунктам):</label>
       <textarea name="preparation_steps" required></textarea>
 
       <label>Ссылка на видео (опционально):</label>
-      <input type="url" name="video_url" />
+      <input type="file" name="video_file" accept="video/*" />
 
       <h3>Ингредиенты:</h3>
       {% for product in products %}
@@ -39,6 +39,69 @@
       {% endfor %}
 
       <button type="submit">Добавить блюдо</button>
+    </form>
+    <div></div>
+    <form
+      method="POST"
+      style="display: flex; justify-content: space-between; gap: 20px"
+    >
+      <div
+        data-hover="true"
+        data-delay="0"
+        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
+      >
+        <select
+          name="product"
+          required
+          class="small-dropdown-toggle w-dropdown-toggle"
+        >
+          <option value="" disabled selected>Выберите продукт</option>
+          {% for product in products %}
+          <option value="{{ product.id }}">{{ product.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div
+        data-hover="true"
+        data-delay="0"
+        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
+      >
+        {% for product in products %}
+        <div class="paragraph-small color-neutral-100">
+          {{ product.measurement.name }}
+        </div>
+        {% endfor %}
+
+        <div
+          id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346c-4528342e"
+          class="flex align-center gap-column-6px"
+        >
+          <input
+            class="input w-password-page w-input1"
+            autofocus="true"
+            maxlength="256"
+            data-name="field"
+            placeholder="Введите значение..."
+            type="number"
+            step="any"
+            name="quantity"
+            id="pass"
+            required
+            style="display: inline; width: auto; min-height: 30px"
+          />
+        </div>
+      </div>
+
+      <div
+        data-hover="true"
+        data-delay="0"
+        data-w-id="9cc462d8-bb30-3faf-01e2-89a59eb05ad4"
+        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
+      >
+        <button class="btn-primary small w-inline-block" type="submit">
+          Добавить продукт
+        </button>
+      </div>
     </form>
   </body>
 </html>
