@@ -503,6 +503,23 @@ def add_dish():
     return render_template('add_dish.html', products=products, measurements=measurements)
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+def profile_page():
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
+    
+    
+    
+
+
+    
+    return render_template('user_profile.html', username=username, role=role, establishment_name=establishment_name)
+
 
 
 if __name__ == '__main__':
