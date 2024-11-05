@@ -1,9 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Добавить блюдо</title>
+    <script>
+      // Функция для добавления нового поля продукта и количества
+      function addProductField() {
+        const container = document.getElementById("products-container");
+        const productDiv = document.createElement("div");
+        productDiv.innerHTML = `
+                <select name="product_id" required>
+                    <option value="" disabled selected>Выберите продукт</option>
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantity" step="0.1" min="0" placeholder="Количество" required>
+                <button type="button" onclick="removeProductField(this)">Удалить</button>
+            `;
+        container.appendChild(productDiv);
+      }
+
+      // Функция для удаления выбранного продукта
+      function removeProductField(button) {
+        button.parentElement.remove();
+      }
+    </script>
   </head>
   <body>
     <h1>Добавить новое блюдо</h1>
@@ -11,97 +33,41 @@
       <label>Название блюда:</label>
       <input type="text" name="name" required />
 
-      <label>Ссылка на изображение:</label>
-      <input type="file" name="image_file" accept="image/*" />
+      <label>Изображение:</label>
+      <input type="file" name="image" accept="image/*" />
 
-      <label>Технология приготовления (по пунктам):</label>
+      <label>Видео (опционально):</label>
+      <input type="file" name="video" accept="video/*" />
+
+      <label>Технология приготовления:</label>
       <textarea name="preparation_steps" required></textarea>
 
-      <label>Ссылка на видео (опционально):</label>
-      <input type="file" name="video_file" accept="video/*" />
-
-      <h3>Ингредиенты:</h3>
-      {% for product in products %}
-      <select name="product" required>
-        <option value="" disabled selected>Выберите продукт</option>
-        {% for product in products %}
-        <option value="{{ product.id }}">{{ product.name }}</option>
-        {% endfor %}
-      </select>
-      <input type="number" name="quantity_{{ product.id }}" step="0.01" />
-      <div>
-        <label
-          >{{ product.name }} ({{ measurements[product.measurement_id - 1].name
-          }}):</label
-        >
-        <input type="number" name="quantity_{{ product.id }}" step="0.01" />
-      </div>
-      {% endfor %}
-
-      <button type="submit">Добавить блюдо</button>
-    </form>
-    <div></div>
-    <form
-      method="POST"
-      style="display: flex; justify-content: space-between; gap: 20px"
-    >
-      <div
-        data-hover="true"
-        data-delay="0"
-        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
-      >
-        <select
-          name="product"
-          required
-          class="small-dropdown-toggle w-dropdown-toggle"
-        >
-          <option value="" disabled selected>Выберите продукт</option>
-          {% for product in products %}
-          <option value="{{ product.id }}">{{ product.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div
-        data-hover="true"
-        data-delay="0"
-        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
-      >
-        {% for product in products %}
-        <div class="paragraph-small color-neutral-100">
-          {{ product.measurement.name }}
-        </div>
-        {% endfor %}
-
-        <div
-          id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346c-4528342e"
-          class="flex align-center gap-column-6px"
-        >
+      <h3>Продукты</h3>
+      <div id="products-container">
+        <div>
+          <select name="product_id" required>
+            <option value="" disabled selected>Выберите продукт</option>
+            {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+          </select>
           <input
-            class="input w-password-page w-input1"
-            autofocus="true"
-            maxlength="256"
-            data-name="field"
-            placeholder="Введите значение..."
             type="number"
-            step="any"
             name="quantity"
-            id="pass"
+            step="0.1"
+            min="0"
+            placeholder="Количество"
             required
-            style="display: inline; width: auto; min-height: 30px"
           />
         </div>
       </div>
 
-      <div
-        data-hover="true"
-        data-delay="0"
-        data-w-id="9cc462d8-bb30-3faf-01e2-89a59eb05ad4"
-        class="mg-sides-0 position-relative---z-index-1 w-dropdown"
-      >
-        <button class="btn-primary small w-inline-block" type="submit">
-          Добавить продукт
-        </button>
-      </div>
+      <button type="button" onclick="addProductField()">
+        Добавить продукт
+      </button>
+      <br /><br />
+
+      <button type="submit">Добавить блюдо</button>
     </form>
   </body>
 </html>

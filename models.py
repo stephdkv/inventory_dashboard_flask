@@ -85,6 +85,13 @@ supplier_product = db.Table('supplier_product',
     db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True)  # исправлено на 'products.id'
 )
 
+dish_products = db.Table('dish_products', db.metadata,
+    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'), primary_key=True),
+    db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True),
+    db.Column('quantity', db.Float, nullable=False),
+    extend_existing=True   # Количество продукта
+)
+
 class Dish(db.Model):
     __tablename__ = 'dishes'
     id = db.Column(db.Integer, primary_key=True)
@@ -93,23 +100,10 @@ class Dish(db.Model):
     preparation_steps = db.Column(db.Text, nullable=True)  # Шаги приготовления
     video_url = db.Column(db.String(200), nullable=True)  # Опциональное видео
     
-    # Дата создания блюда
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
     # Связь с продуктами
-    ingredients = db.relationship('DishIngredient', back_populates='dish')
+    products = db.relationship('Product', secondary=dish_products,
+                               backref=db.backref('dishes', lazy='dynamic'))
     
-class DishIngredient(db.Model):
-    __tablename__ = 'dish_products'
-    id = db.Column(db.Integer, primary_key=True)
-    dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
-    quantity = db.Column(db.Float, nullable=False)  # Количество продукта в рецепте
-    measurement_id = db.Column(db.Integer, db.ForeignKey('measurement.id'), nullable=False)
-    # Связи
-    dish = db.relationship('Dish', back_populates='ingredients')
-    product = db.relationship('Product', backref=db.backref('dish_products', lazy=True))
-    measurement = db.relationship('Measurement')
 
 # Добавляем захардкоженные единицы измерения при первом запуске
 def add_default_measurements():

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, DishIngredient 
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, dish_products 
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
 from decorators import role_required
@@ -466,38 +466,58 @@ def add_dish():
     
     if request.method == 'POST':
         name = request.form.get('name')
-        image_file = request.files['image_file']
+        image_file = request.files.get('image')  # Поле теперь называется 'image'
+       
         image_path = None
         if image_file:
             filename = secure_filename(image_file.filename)
+            relative_path = f"uploads/{filename}"
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             image_file.save(image_path)
 
         # Обработка загруженного видео
-        video_file = request.files['video_file']
+        video_file = request.files.get('video')  # Поле теперь называется 'video'
         video_path = None
         if video_file:
             filename = secure_filename(video_file.filename)
             video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             video_file.save(video_path)
 
-        preparation_steps = request.form.getlist('preparation_steps')
-        ingredient_data = request.form.getlist('ingredient')
+        preparation_steps = request.form.get('preparation_steps')
         
-        if not name or not preparation_steps:
-            flash("Пожалуйста, заполните все обязательные поля.")
-            return redirect(url_for('add_dish'))
-        
-        dish = Dish(name=name, image=image_file, video_url=video_file, preparation_steps='\n'.join(preparation_steps))
-        for data in ingredient_data:
-            product_id, quantity, measurement_id = data.split(',')
-            ingredient = DishIngredient(product_id=int(product_id), quantity=float(quantity), measurement_id=int(measurement_id))
-            dish.ingredients.append(ingredient)
 
+        dish = Dish(
+            name=name,
+            image_url=relative_path,
+            video_url=video_path,
+            preparation_steps=preparation_steps
+        )
         db.session.add(dish)
-        db.session.commit()
+        db.session.flush()
+
+        product_ids = request.form.getlist('product_id')
+        quantities = request.form.getlist('quantity')
         
-        flash("Блюдо успешно добавлено!")
+        for product_id, quantity in zip(product_ids, quantities):
+            if product_id and quantity:  # Проверка, что оба значения не пустые
+                try:
+                    quantity_value = float(quantity)  # Преобразуем количество в число
+                    product = Product.query.get(int(product_id))
+                    if product:
+                        db.session.execute(
+                            dish_products.insert().values(
+                                dish_id=dish.id, 
+                                product_id=product.id, 
+                                quantity=quantity_value  # Передаем количество
+                            )
+                        )
+                except ValueError:
+                    # Игнорируем, если количество не удалось преобразовать в float
+                    continue
+
+        db.session.commit()
+
+        db.session.commit()
         return redirect(url_for('dishes'))
     
     return render_template('add_dish.html', products=products, measurements=measurements)
@@ -512,11 +532,6 @@ def profile_page():
         establishment_name = "Лукашевича"
     else:
         establishment_name = 'Ленина'
-    
-    
-    
-
-
     
     return render_template('user_profile.html', username=username, role=role, establishment_name=establishment_name)
 

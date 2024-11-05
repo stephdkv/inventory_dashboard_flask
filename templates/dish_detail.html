@@ -7,19 +7,35 @@
   </head>
   <body>
     <h1>{{ dish.name }}</h1>
-    <img src="{{ dish.image_url }}" alt="{{ dish.name }}" />
+
+    {% if dish.image_url %}
+    <img
+      src="{{ url_for('static', filename=dish.image_url) }}"
+      alt="{{ dish.name }}"
+    />
+    {% endif %}
+
     <p><strong>Технология приготовления:</strong></p>
     <p>{{ dish.preparation_steps }}</p>
 
-    {% if dish.video_url %}
+    {% if dish.video_path %}
     <p><strong>Видео:</strong></p>
-    <iframe src="{{ dish.video_url }}" width="560" height="315"></iframe>
+    <video width="560" height="315" controls>
+      <source
+        src="{{ url_for('static', filename=dish.video_url.split('static/')[1]) }}"
+        type="video/mp4"
+      />
+      Ваш браузер не поддерживает воспроизведение видео.
+    </video>
     {% endif %}
 
     <h3>Ингредиенты:</h3>
     <ul>
       {% for product in dish.products %}
-      <li>{{ product.name }} - {{ dish_products.quantity }}</li>
+      <li>
+        {{ product.name }} - {{ product.quantity }} {{ product.measurement.name
+        }}
+      </li>
       {% endfor %}
     </ul>
   </body>
