@@ -43,6 +43,30 @@
   --system--orange-100: #fff3e4;
 }
 
+.w-webflow-badge {
+  display: none !important;
+}
+
+/* Пример кастомного скроллбара */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral--800);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral--400);
+  border-radius: 10px;
+  border: 2px solid var(--neutral--800);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral--200);
+}
+
 .w-layout-grid {
   grid-row-gap: 16px;
   grid-column-gap: 16px;
