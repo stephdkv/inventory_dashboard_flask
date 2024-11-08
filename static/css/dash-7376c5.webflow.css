@@ -1874,6 +1874,20 @@ figcaption {
   display: grid;
 }
 
+.product-status-table-row {
+  grid-column-gap: 10px;
+  border-bottom: 0.6px solid var(--neutral--600);
+  grid-template-rows: auto;
+  grid-template-columns: 2fr 1fr 0.2fr;
+  grid-auto-columns: 1fr;
+  align-items: center;
+  min-width: 770px;
+  min-height: 64px;
+  margin-bottom: -0.6px;
+  padding: 12px 28px;
+  display: grid;
+}
+
 .orders-status-table-row.table-header {
   min-height: 28px;
   padding-top: 0;
@@ -2118,7 +2132,7 @@ figcaption {
 .table-main-container {
   margin-bottom: -0.6px;
   padding-bottom: 0.6px;
-  overflow: auto;
+  /* overflow: auto; */
 }
 
 .max-w-20px {
@@ -2746,6 +2760,12 @@ figcaption {
 
   .orders-status-table-row {
     grid-template-columns: 0.4fr 0.8fr 0.6fr 0.6fr 0.6fr 0.4fr 64px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .product-status-table-row {
+    grid-template-columns: 0.12fr 0.2fr 0.12fr;
     padding-left: 24px;
     padding-right: 24px;
   }

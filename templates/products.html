@@ -207,10 +207,7 @@
                       id="products-{{ location.id }}"
                       style="display: none"
                     >
-                      <div
-                        class="orders-status-table-row table-header"
-                        style="grid-template-columns: 2fr 1fr 0.2fr"
-                      >
+                      <div class="product-status-table-row table-header">
                         <div
                           id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
                           class="flex align-center gap-column-6px"
@@ -256,10 +253,7 @@
                         </div>
                       </div>
                       {% for product in location.products %}
-                      <div
-                        class="orders-status-table-row"
-                        style="grid-template-columns: 2fr 1fr 0.2fr"
-                      >
+                      <div class="product-status-table-row">
                         <div class="paragraph-small color-neutral-100">
                           {{ product.name }}
                         </div>
