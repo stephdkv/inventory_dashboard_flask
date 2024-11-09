@@ -37,9 +37,23 @@ def index():
 @login_required
 @role_required('admin')  # Только администраторы могут видеть этот список
 def user_list():
+    username = current_user.username
+    role = current_user.role.capitalize()
+    establishment_id = current_user.establishment_id
+    if establishment_id == 1:
+        establishment_name = "Лукашевича"
+    else:
+        establishment_name = 'Ленина'
+    if request.method == 'POST':
+        supplier_name = request.form.get('supplier')
+        if supplier_name:
+            supplier = Supplier(name=supplier_name)
+            db.session.add(supplier)
+            db.session.commit()
+            return redirect(url_for('suppliers_page'))
     users = User.query.all()
     establishments = {1: 'Лукашевича', 2: 'Ленина'}  
-    return render_template('user_list.html', users=users, establishments=establishments)
+    return render_template('user_list.html', users=users, establishments=establishments, establishment_name=establishment_name, role=role, username=username )
 
 @app.route('/set_role/<int:user_id>', methods=['POST'])
 @login_required
