@@ -115,3 +115,18 @@ def add_default_measurements():
 
 
 
+class UserProductLocation(db.Model):
+    __tablename__ = 'user_product_location'
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Внешний ключ для пользователя
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('assigned_locations_products', lazy=True))
+    
+    # Внешний ключ для локации
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    location = db.relationship('Location', backref=db.backref('assigned_users', lazy=True))
+
+
+
+

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, dish_products 
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, dish_products, UserProductLocation
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
 from decorators import role_required
@@ -321,7 +321,12 @@ def remove_product_from_supplier(supplier_id, product_id):
 @app.route('/inventory', methods=['GET', 'POST'])
 def inventory_page():
     establishment_id = current_user.establishment_id
-    locations = Location.query.filter_by(establishment_id=establishment_id).all()
+    user_id = current_user.id
+    assigned_locations = UserProductLocation.query.filter_by(user_id=user_id).all()
+    print(assigned_locations)
+    
+    # Фильтруем уникальные локации и продукты
+    locations = {assignment.location for assignment in assigned_locations}
     current_date = datetime.now().strftime('%d.%m.%y')
     username = current_user.username
     role = current_user.role.capitalize()
@@ -548,6 +553,35 @@ def profile_page():
         establishment_name = 'Ленина'
     
     return render_template('user_profile.html', username=username, role=role, establishment_name=establishment_name)
+
+
+@app.route('/assign_inventory/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def assign_inventory(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    # Получаем список локаций и продуктов для текущего заведения пользователя
+    establishment_id = current_user.establishment_id
+    locations = Location.query.filter_by(establishment_id=establishment_id).all()
+    
+    
+    if request.method == 'POST':
+        # Получаем выбранные продукты и локации из формы
+        
+        selected_locations = request.form.getlist('locations')
+        
+        # Удаляем текущие назначения и добавляем новые
+        UserProductLocation.query.filter_by(user_id=user.id).delete()
+        for location_id in selected_locations:
+            
+            assignment = UserProductLocation(user_id=user.id, location_id=location_id)
+            db.session.add(assignment)
+        
+        db.session.commit()
+        flash('Назначения успешно обновлены', 'success')
+        return redirect(url_for('products_page'))  # Перенаправляем на панель администратора
+
+    return render_template('assign_inventory.html', user=user, locations=locations)
 
 
 
