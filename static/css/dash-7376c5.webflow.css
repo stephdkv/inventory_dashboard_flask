@@ -2813,6 +2813,10 @@ figcaption {
     padding-left: 24px;
     padding-right: 24px;
   }
+  .measurement-center {
+    display: flex;
+    justify-content: center;
+  }
 
   .annually-billing-item-container.width-100-mbl,
   .monthly-billing-item-container.width-100-mbl {

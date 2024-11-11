@@ -92,10 +92,7 @@
                         id="products-{{ location.id }}"
                         style="display: none"
                       >
-                        <div
-                          class="orders-status-table-row table-header"
-                          style="grid-template-columns: 2fr 1fr 0.5fr"
-                        >
+                        <div class="product-status-table-row table-header">
                           <div
                             id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
                             class="flex align-center gap-column-6px"
@@ -119,7 +116,7 @@
                               alt=""
                             />
                             <div class="text-50 semibold color-neutral-100">
-                              Единица измерения
+                              Ед. изм.
                             </div>
                           </div>
                           <div
@@ -141,15 +138,14 @@
                           </div>
                         </div>
                         {% for product in location.products %}
-                        <div
-                          class="orders-status-table-row"
-                          style="grid-template-columns: 2fr 1fr 0.5fr"
-                        >
+                        <div class="product-status-table-row">
                           <div class="paragraph-small color-neutral-100">
                             {{ product.name }}
                           </div>
 
-                          <div class="paragraph-small color-neutral-100">
+                          <div
+                            class="paragraph-small color-neutral-100 measurement-center"
+                          >
                             {{ product.measurement.name }}
                           </div>
 
