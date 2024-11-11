@@ -18,11 +18,11 @@
     <p><strong>Технология приготовления:</strong></p>
     <p>{{ dish.preparation_steps }}</p>
 
-    {% if dish.video_path %}
+    {% if dish.video_url %}
     <p><strong>Видео:</strong></p>
     <video width="560" height="315" controls>
       <source
-        src="{{ url_for('static', filename=dish.video_url.split('static/')[1]) }}"
+        src="{{ url_for('static', filename=dish.video_url) }}"
         type="video/mp4"
       />
       Ваш браузер не поддерживает воспроизведение видео.
@@ -31,10 +31,10 @@
 
     <h3>Ингредиенты:</h3>
     <ul>
-      {% for product in dish.products %}
+      {% for dish_product in dish.dish_products %}
       <li>
-        {{ product.name }} - {{ product.quantity }} {{ product.measurement.name
-        }}
+        {{ dish_product.product.name }} - {{ dish_product.quantity }} {{
+        dish_product.product.measurement.name }}
       </li>
       {% endfor %}
     </ul>

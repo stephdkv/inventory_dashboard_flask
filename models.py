@@ -49,6 +49,8 @@ class Product(db.Model):
     location = db.relationship('Location', backref=db.backref('products', lazy=True))
     measurement = db.relationship('Measurement', backref=db.backref('products', lazy=True))
     supplier = db.relationship('Supplier', back_populates='products')
+    dish_products = db.relationship('DishProduct', back_populates='product')
+    
 
 
 
@@ -85,24 +87,29 @@ supplier_product = db.Table('supplier_product',
     db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True)  # исправлено на 'products.id'
 )
 
-dish_products = db.Table('dish_products', db.metadata,
-    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'), primary_key=True),
-    db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True),
-    db.Column('quantity', db.Float, nullable=False),
-    extend_existing=True   # Количество продукта
-)
+class DishProduct(db.Model):
+    __tablename__ = 'dish_products'
+    dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), primary_key=True)
+    quantity = db.Column(db.Float, nullable=False)
+    
+    # Определим связи с Dish и Product
+    dish = db.relationship('Dish', back_populates='dish_products')
+    product = db.relationship('Product', back_populates='dish_products')
 
 class Dish(db.Model):
     __tablename__ = 'dishes'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    image_url = db.Column(db.String(200), nullable=True)  # URL изображения
-    preparation_steps = db.Column(db.Text, nullable=True)  # Шаги приготовления
-    video_url = db.Column(db.String(200), nullable=True)  # Опциональное видео
+    image_url = db.Column(db.String(200), nullable=True)  
+    preparation_steps = db.Column(db.Text, nullable=True)  
+    video_url = db.Column(db.String(200), nullable=True)  
     
-    # Связь с продуктами
-    products = db.relationship('Product', secondary=dish_products,
-                               backref=db.backref('dishes', lazy='dynamic'))
+    # Связь с DishProduct
+    dish_products = db.relationship('DishProduct', back_populates='dish')
+
+
+
     
 
 # Добавляем захардкоженные единицы измерения при первом запуске

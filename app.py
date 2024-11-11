@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, dish_products, UserProductLocation
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, UserProductLocation, DishProduct
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
 from decorators import role_required
@@ -485,35 +485,46 @@ def add_dish():
     
     if request.method == 'POST':
         name = request.form.get('name')
-        image_file = request.files.get('image')  # Поле теперь называется 'image'
-       
+        image_file = request.files.get('image')
+        print(image_file)  # Поле для изображения
         image_path = None
         if image_file:
             filename = secure_filename(image_file.filename)
-            relative_path = f"uploads/{filename}"
+            print(filename)
+            relative_image_path = f"uploads/{filename}"
+            print(relative_image_path)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            print(image_path)
             image_file.save(image_path)
+            print(image_path)
 
         # Обработка загруженного видео
-        video_file = request.files.get('video')  # Поле теперь называется 'video'
+        video_file = request.files.get('video')
+        print(video_file)
         video_path = None
         if video_file:
             filename = secure_filename(video_file.filename)
+            print(filename)
+            relative_video_path = f"uploads/{filename}"
+            print(relative_video_path)
             video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            print(video_path)
             video_file.save(video_path)
+            print(video_file)
 
         preparation_steps = request.form.get('preparation_steps')
         
-
+        # Создаем блюдо
         dish = Dish(
             name=name,
-            image_url=relative_path,
-            video_url=video_path,
+            image_url=relative_image_path,
+            video_url=relative_video_path,
             preparation_steps=preparation_steps
         )
         db.session.add(dish)
-        db.session.flush()
+        db.session.flush()  # Получаем ID блюда после вставки
 
+        # Обработка продуктов и количества
         product_ids = request.form.getlist('product_id')
         quantities = request.form.getlist('quantity')
         
@@ -523,23 +534,22 @@ def add_dish():
                     quantity_value = float(quantity)  # Преобразуем количество в число
                     product = Product.query.get(int(product_id))
                     if product:
-                        db.session.execute(
-                            dish_products.insert().values(
-                                dish_id=dish.id, 
-                                product_id=product.id, 
-                                quantity=quantity_value  # Передаем количество
-                            )
+                        # Добавляем продукт через модель DishProduct
+                        dish_product = DishProduct(
+                            dish_id=dish.id, 
+                            product_id=product.id, 
+                            quantity=quantity_value  # Передаем количество
                         )
+                        db.session.add(dish_product)
                 except ValueError:
                     # Игнорируем, если количество не удалось преобразовать в float
                     continue
 
-        db.session.commit()
-
-        db.session.commit()
+        db.session.commit()  # Сохраняем все изменения в базе данных
         return redirect(url_for('dishes'))
     
     return render_template('add_dish.html', products=products, measurements=measurements)
+
 
 
 @app.route('/profile', methods=['GET', 'POST'])
