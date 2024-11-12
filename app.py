@@ -6,6 +6,7 @@ from decorators import role_required
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from load_data_from_excel import load_data_from_excel
 
 import pandas as pd
 import os
@@ -23,6 +24,8 @@ login_manager.login_view = 'login'
 with app.app_context():
     db.create_all()
     add_default_measurements()
+    file_path = 'inventory 3.xlsx'
+    load_data_from_excel(file_path)
 
 @login_manager.user_loader
 def load_user(user_id):
