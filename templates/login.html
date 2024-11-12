@@ -6,7 +6,7 @@
 >
   <head>
     <meta charset="utf-8" />
-    <title>Protected page - Dashdark X Webflow Template</title>
+    <title>Protected page</title>
     <meta
       content="Take your startup to new heights with Dashdark X 🌑📱! Our Devlink Dark Mode Dashboard Webflow Template is the ultimate solution for stunning SaaS dashboards."
       name="description"
@@ -141,6 +141,18 @@
                     {{ form.submit(class="btn-primary large w-password-page
                     w-button") }}
                   </div>
+                  <a href="{{ url_for( 'register' ) }}">
+                    <div
+                      class="text-100 medium color-neutral-100"
+                      style="
+                        display: flex;
+                        margin-top: 20px;
+                        justify-content: center;
+                      "
+                    >
+                      Зарегестрироваться
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>

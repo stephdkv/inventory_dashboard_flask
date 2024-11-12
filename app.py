@@ -30,7 +30,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('login'))
 
 
 @app.route('/user_list')
@@ -114,7 +114,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('products_page'))
     
     form = LoginForm()
     if form.validate_on_submit():
