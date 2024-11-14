@@ -24,8 +24,8 @@ login_manager.login_view = 'login'
 with app.app_context():
     db.create_all()
     add_default_measurements()
-    file_path = 'inventory 3.xlsx'
-    load_data_from_excel(file_path)
+    #file_path = 'inventory 3.xlsx'
+    #load_data_from_excel(file_path)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -326,7 +326,6 @@ def inventory_page():
     establishment_id = current_user.establishment_id
     user_id = current_user.id
     assigned_locations = UserProductLocation.query.filter_by(user_id=user_id).all()
-    print(assigned_locations)
     
     # Фильтруем уникальные локации и продукты
     locations = {assignment.location for assignment in assigned_locations}
@@ -352,7 +351,7 @@ def inventory_page():
                     })
 
         df = pd.DataFrame(data)
-        file_name = f'Инвентаризация_{establishment_name}_{current_date}.xlsx'
+        file_name = f'Инвентаризация_{establishment_name}_{current_date}_{user_id}.xlsx'
         file_path = os.path.join('static', file_name)
         df.to_excel(file_path, index=False)
 
