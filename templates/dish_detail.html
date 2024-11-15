@@ -14,9 +14,18 @@
       alt="{{ dish.name }}"
     />
     {% endif %}
+    <h3>Ингредиенты:</h3>
+    <ul>
+      {% for dish_product in dish.dish_products %}
+      <li>
+        {{ dish_product.product.name }} - {{ dish_product.quantity }} {{
+        dish_product.product.measurement.name }}
+      </li>
+      {% endfor %}
+    </ul>
 
     <p><strong>Технология приготовления:</strong></p>
-    <p>{{ dish.preparation_steps }}</p>
+    <div>{{ dish.preparation_steps | safe }}</div>
 
     {% if dish.video_url %}
     <p><strong>Видео:</strong></p>
@@ -28,15 +37,5 @@
       Ваш браузер не поддерживает воспроизведение видео.
     </video>
     {% endif %}
-
-    <h3>Ингредиенты:</h3>
-    <ul>
-      {% for dish_product in dish.dish_products %}
-      <li>
-        {{ dish_product.product.name }} - {{ dish_product.quantity }} {{
-        dish_product.product.measurement.name }}
-      </li>
-      {% endfor %}
-    </ul>
   </body>
 </html>

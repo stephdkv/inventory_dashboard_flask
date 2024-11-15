@@ -26,6 +26,21 @@
         button.parentElement.remove();
       }
     </script>
+    <script
+      src="https://cdn.tiny.cloud/1/lrv7k8540tsa7uoqsg7ema19i4uznk898rq8ktwxlyqpk1wf/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+    <script>
+      tinymce.init({
+        selector: "#preparation_steps", // ID вашего текстового поля
+        menubar: false, // Отключить верхнее меню
+        plugins: "lists link image preview", // Добавить плагины для удобства
+        toolbar:
+          "undo redo | bold italic | bullist numlist | link image | preview", // Кастомизация тулбара
+        branding: false, // Убрать брендинг
+        height: 300, // Высота редактора
+      });
+    </script>
   </head>
   <body>
     <h1>Добавить новое блюдо</h1>
@@ -39,8 +54,8 @@
       <label>Видео (опционально):</label>
       <input type="file" name="video" accept="video/*" />
 
-      <label>Технология приготовления:</label>
-      <textarea name="preparation_steps" required></textarea>
+      <label for="preparation_steps">Технология приготовления:</label>
+      <textarea id="preparation_steps" name="preparation_steps"></textarea>
 
       <h3>Продукты</h3>
       <div id="products-container">
