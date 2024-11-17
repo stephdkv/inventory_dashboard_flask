@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response
 from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, UserProductLocation, DishProduct
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from load_data_from_excel import load_data_from_excel
+from xhtml2pdf import pisa
+import io
 
 import pandas as pd
 import os
@@ -478,6 +480,30 @@ def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     return render_template('dish_detail.html', dish=dish)
 
+@app.route('/dishes/<int:dish_id>/download', methods=['GET'])
+def download_dish_pdf(dish_id):
+    dish = Dish.query.get_or_404(dish_id)
+
+
+    # Подготовка HTML
+    rendered_html = render_template(
+        'dish_detail.html',
+        dish=dish,
+
+    )
+
+    # Создать PDF
+    pdf = io.BytesIO()
+    pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf)
+
+    if pisa_status.err:
+        return "PDF генерация не удалась", 500
+
+    # Вернуть PDF файл
+    response = make_response(pdf.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f"attachment; filename*=UTF-8''{dish.name}.pdf"
+    return response
 
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
