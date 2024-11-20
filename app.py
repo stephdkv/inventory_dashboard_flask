@@ -442,6 +442,28 @@ def add_product_to_supplier(supplier_id):
 
     return render_template('add_product_to_supplier.html', supplier=supplier, products=products, measurements=measurements)
 
+@app.route('/suppliers/<int:supplier_id>/edit_product', methods=['GET', 'POST'])
+def edit_product_to_supplier(supplier_id):
+    product = Product.query.get_or_404(supplier_id)
+    supplier = Supplier.query.get_or_404(supplier_id)
+    products = Product.query.group_by(Product.name).all()
+    measurements = Measurement.query.all()
+    product_ids = request.form.getlist('products')
+    supplier.products = Product.query.filter(Product.id.in_(product_ids)).all()
+
+    if request.method == 'POST':
+        product_id = request.form.get('product')
+        measurement_id = request.form.get('measurement')
+        
+
+        if product_id and measurement_id:
+            product = Product.query.get_or_404(product_id)
+            supplier.products.append(product)  # Добавляем продукт к поставщику
+            db.session.commit()
+            return redirect(url_for('suppliers_page'))  # Перенаправляем на страницу поставщиков
+
+    return render_template('edit_product_to_supplier.html',product=product, supplier=supplier, products=products, measurements=measurements)
+
 
 
 @app.route('/orders', methods=['GET', 'POST'])

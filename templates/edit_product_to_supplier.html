@@ -6,7 +6,7 @@
 >
   <head>
     <meta charset="utf-8" />
-    <title>Редактирование продукта</title>
+    <title>Добавить продукт к поставщику</title>
     {% include 'meta.html' %}
   </head>
   <body>
@@ -17,16 +17,15 @@
         <div class="dashboard-content">
           <div class="dashboard-main-content">
             <div class="container-default w-container">
-              
-
-              <h1>Редактирование :</h1>
+              <h1>Редактировать</h1>
 
               <div class="mg-bottom-24px">
                 <div class="grid-1-column">
                   <div class="card overflow-hidden">
                     <div class="_2-items-wrap-container pd-32px---28px">
                       <div class="text-300 medium color-neutral-100">
-                        Редактирование продукта :
+                        Редактировать продукт для поставщика {{ supplier.name }}
+                        :
                       </div>
                       <form
                         method="POST"
@@ -36,31 +35,21 @@
                           gap: 20px;
                         "
                       >
-                        <input
-                          class="input w-password-page w-input1"
-                          autofocus="true"
-                          maxlength="256"
-                          name="product"
-                          data-name="field"
-                          placeholder="Введите название..."
-                          type="text"
-                          id="pass"
-                          required
-                          style="display: inline; width: auto; min-height: 30px"
-                          value="{{ product.name }}"
-                        />
                         <div
                           data-hover="true"
                           data-delay="0"
                           class="mg-sides-0 position-relative---z-index-1 w-dropdown"
                         >
                           <select
-                            name="location"
+                            name="product"
                             required
                             class="small-dropdown-toggle w-dropdown-toggle"
                           >
-                            {% for location in locations %}
-                            <option value="{{ location.id }}" {% if location.id == product.location_id %} selected {% endif %}>{{ location.name }}</option>
+                            
+                            {% for product in products %}
+                            <option value="{{ product.id }}" {% if product.id == product.supplier_id %} selected {% endif %}>
+                              {{ product.name }}
+                            </option>
                             {% endfor %}
                           </select>
                         </div>
@@ -74,9 +63,6 @@
                             required
                             class="small-dropdown-toggle w-dropdown-toggle"
                           >
-                            <option value="" disabled selected>
-                              Выбрать ед. изм.
-                            </option>
                             {% for measurement in measurements %}
                             <option value="{{ measurement.id }}" {% if measurement.id == product.measurement_id %} selected {% endif %}>
                               {{ measurement.name }}
@@ -95,12 +81,19 @@
                             class="btn-primary small w-inline-block"
                             type="submit"
                           >
-                            Сохранить
+                            Изменить продукт
                           </button>
                         </div>
+                        <a
+                          href="{{ url_for('suppliers_page') }}"
+                          class="btn-primary w-inline-block"
+                        >
+                          <div class="flex-horizontal gap-column-6px">
+                            <div>Назад</div>
+                          </div>
+                        </a>
                       </form>
                     </div>
-                    
                   </div>
                 </div>
               </div>
