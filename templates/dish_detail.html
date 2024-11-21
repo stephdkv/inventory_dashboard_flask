@@ -37,11 +37,7 @@
     {% if dish.image_url %}
     <div class="section">
       <h2>Изображение</h2>
-      <img
-        src="{{ url_for('static', filename=dish.image_url) }}"
-        alt="{{ dish.name }}"
-        width="300"
-      />
+      <img src="{{ dish_image_url }}" alt="{{ dish.name }}" width="300" />
     </div>
     {% endif %}
 

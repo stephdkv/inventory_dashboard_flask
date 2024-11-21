@@ -45,7 +45,6 @@
                             required
                             class="small-dropdown-toggle w-dropdown-toggle"
                           >
-                            
                             {% for product in products %}
                             <option value="{{ product.id }}" {% if product.id == product.supplier_id %} selected {% endif %}>
                               {{ product.name }}

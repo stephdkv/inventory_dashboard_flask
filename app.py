@@ -9,6 +9,7 @@ from datetime import datetime
 from load_data_from_excel import load_data_from_excel
 from xhtml2pdf import pisa
 import io
+import weasyprint
 
 import pandas as pd
 import os
@@ -500,7 +501,10 @@ def dishes():
 @app.route('/dishes/<int:dish_id>', methods=['GET'])
 def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
-    return render_template('dish_detail.html', dish=dish)
+    STATIC_ROOT = "С:/project/inv/static"
+    dish_image_url = f"{STATIC_ROOT}/{dish.image_url}"
+
+    return render_template('dish_detail.html', dish=dish, dish_image_url = dish_image_url)
 
 @app.route('/dishes/<int:dish_id>/download', methods=['GET'])
 def download_dish_pdf(dish_id):
@@ -513,10 +517,15 @@ def download_dish_pdf(dish_id):
         dish=dish,
 
     )
+    pdf = weasyprint.HTML(rendered_html).write_pdf()
+    open('google.pdf', 'wb').write(pdf)
+    
 
     # Создать PDF
     pdf = io.BytesIO()
+    
     pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf)
+    
 
     if pisa_status.err:
         return "PDF генерация не удалась", 500
