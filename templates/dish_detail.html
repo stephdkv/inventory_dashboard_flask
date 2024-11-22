@@ -37,7 +37,11 @@
     {% if dish.image_url %}
     <div class="section">
       <h2>Изображение</h2>
-      <img src="{{ dish_image_url }}" alt="{{ dish.name }}" width="300" />
+      <img
+        src="{{ url_for('static', filename=dish.image_url) }}"
+        alt="{{ dish.name }}"
+        width="300"
+      />
     </div>
     {% endif %}
 
@@ -58,12 +62,23 @@
         {% endfor %}
       </ul>
     </div>
+    {% endif %} {% if dish.video_url %}
+    <p><strong>Видео:</strong></p>
+    <video width="560" height="315" controls>
+      <source
+        src="{{ url_for('static', filename=dish.video_url) }}"
+        type="video/mp4"
+      />
+      Ваш браузер не поддерживает воспроизведение видео.
+    </video>
     {% endif %}
-    <a
-      href="{{ url_for('download_dish_pdf', dish_id=dish.id) }}"
-      class="btn btn-primary"
-    >
-      Скачать рецепт в PDF
-    </a>
+    <div>
+      <a
+        href="{{ url_for('download_dish_pdf', dish_id=dish.id) }}"
+        class="btn btn-primary"
+      >
+        Скачать рецепт в PDF
+      </a>
+    </div>
   </body>
 </html>

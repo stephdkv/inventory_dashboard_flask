@@ -1,7 +1,9 @@
 arabic-reshaper==3.0.0
 asn1crypto==1.5.1
+beautifulsoup4==4.12.3
 blinker==1.8.2
 Brotli==1.1.0
+bs4==0.0.2
 certifi==2024.8.30
 cffi==1.17.1
 chardet==5.2.0
@@ -42,6 +44,7 @@ qrcode==8.0
 reportlab==4.2.5
 requests==2.32.3
 six==1.16.0
+soupsieve==2.6
 SQLAlchemy==2.0.31
 svglib==1.5.1
 tinycss2==1.4.0

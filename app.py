@@ -7,9 +7,17 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from load_data_from_excel import load_data_from_excel
-from xhtml2pdf import pisa
-import io
-import weasyprint
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
+from urllib.parse import quote
+from html.parser import HTMLParser
+from bs4 import BeautifulSoup
+import qrcode
+import tempfile
+
 
 import pandas as pd
 import os
@@ -23,12 +31,24 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 
 with app.app_context():
     db.create_all()
     add_default_measurements()
     #file_path = 'inventory 3.xlsx'
     #load_data_from_excel(file_path)
+
+class HTMLCleaner(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.text = []
+
+    def handle_data(self, data):
+        self.text.append(data)
+
+    def get_clean_text(self):
+        return ''.join(self.text)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -501,40 +521,100 @@ def dishes():
 @app.route('/dishes/<int:dish_id>', methods=['GET'])
 def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
-    STATIC_ROOT = "С:/project/inv/static"
-    dish_image_url = f"{STATIC_ROOT}/{dish.image_url}"
+    return render_template('dish_detail.html', dish=dish)
 
-    return render_template('dish_detail.html', dish=dish, dish_image_url = dish_image_url)
+from io import BytesIO
+from flask import make_response
 
 @app.route('/dishes/<int:dish_id>/download', methods=['GET'])
 def download_dish_pdf(dish_id):
     dish = Dish.query.get_or_404(dish_id)
-
-
-    # Подготовка HTML
-    rendered_html = render_template(
-        'dish_detail.html',
-        dish=dish,
-
-    )
-    pdf = weasyprint.HTML(rendered_html).write_pdf()
-    open('google.pdf', 'wb').write(pdf)
     
+    # Создаем временный буфер для PDF
+    pdf_buffer = BytesIO()
+    x_margin = 50
+    # Создаем PDF с использованием ReportLab
+    pdf = canvas.Canvas(pdf_buffer, pagesize=A4)
+    pdf.setTitle(f"Рецепт: {dish.name}")
 
-    # Создать PDF
-    pdf = io.BytesIO()
+    # Заголовок
+    pdf.setFont("DejaVuSans", 16)
+    pdf.drawString(50, 800, f"Рецепт: {dish.name}")
+
+    # Если изображение есть, добавим его
+    if dish.image_url:
+        try:
+            img_path = os.path.join(app.root_path, 'static', dish.image_url)
+            pdf.drawImage(img_path, 50, 640, width=200, height=150, preserveAspectRatio=True)
+        except Exception as e:
+            pdf.setFont("DejaVuSans", 10)
+            pdf.drawString(50, 770, f"[Ошибка загрузки изображения: {str(e)}]")
+
+ 
+
+    # Парсинг HTML
+    soup = BeautifulSoup(dish.preparation_steps, "html.parser")
+    ol_items = soup.find_all('li')
+
+    y_position = 600
+    pdf.setFont("DejaVuSans", 10)
+
+    for idx, li in enumerate(ol_items, start=1):
+        line = f"{idx}. {li.get_text(strip=True)}"
+        pdf.drawString(50, y_position, line)
+        y_position -= 15
+        if y_position < 50:
+            pdf.showPage()
+            y_position = 1000
+
+    # Ингредиенты
+    y_position = 500
+    pdf.setFont("DejaVuSans", 12)
+    pdf.drawString(50, y_position, "Ингредиенты:")
+    y_position -= 20
+    pdf.setFont("DejaVuSans", 10)
+
+    for dish_product in dish.dish_products:
+        product = dish_product.product
+        line = f"{product.name} - {dish_product.quantity} {product.measurement.name}"
+        pdf.drawString(50, y_position, line)
+        y_position -= 15
+        if y_position < 50:
+            pdf.showPage()
+            y_position = 800
+
+    # Генерация QR-кода
+    qr_url = f"{request.host_url}dishes/{dish_id}"
+    qr = qrcode.make(qr_url)  # Создаем QR-код
     
-    pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf)
-    
+    # Сохраняем QR-код в временный файл
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_qr_file:
+        qr.save(temp_qr_file, format="PNG")
+        temp_qr_file.close()  # Закрываем файл, чтобы можно было использовать его путь
+        
+        # Добавляем QR-код в PDF
+        pdf.drawImage(temp_qr_file.name, x_margin + 400, y_position - 100, width=100, height=100)
+        
+        # Удаляем временный файл после использования
+        os.remove(temp_qr_file.name)       
 
-    if pisa_status.err:
-        return "PDF генерация не удалась", 500
+    # Завершаем PDF
+    pdf.save()
 
-    # Вернуть PDF файл
-    response = make_response(pdf.getvalue())
+    # Перемещаем курсор в начало буфера
+    pdf_buffer.seek(0)
+
+   # Кодируем имя файла для Content-Disposition
+    filename = f"{dish.name}.pdf"
+    filename_encoded = quote(filename)
+
+    # Возвращаем PDF в виде HTTP-ответа
+    response = make_response(pdf_buffer.getvalue())
     response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f"attachment; filename*=UTF-8''{dish.name}.pdf"
+    response.headers['Content-Disposition'] = f"attachment; filename*=UTF-8''{filename_encoded}"
+
     return response
+
 
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
