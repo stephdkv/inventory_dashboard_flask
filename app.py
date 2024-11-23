@@ -11,6 +11,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.lib.utils import simpleSplit
+from reportlab.lib import colors
 from io import BytesIO
 from urllib.parse import quote
 from html.parser import HTMLParser
@@ -32,6 +36,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
 
 with app.app_context():
     db.create_all()
@@ -530,6 +535,11 @@ from flask import make_response
 def download_dish_pdf(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     
+    page_width, page_height = A4
+    left_margin = 50
+    right_margin = 50
+    line_height = 15  # Высота строки
+
     # Создаем временный буфер для PDF
     pdf_buffer = BytesIO()
     x_margin = 50
@@ -539,13 +549,13 @@ def download_dish_pdf(dish_id):
 
     # Заголовок
     pdf.setFont("DejaVuSans", 16)
-    pdf.drawString(50, 800, f"Рецепт: {dish.name}")
+    pdf.drawString(50, page_height - 70, f"{dish.name}")
 
     # Если изображение есть, добавим его
     if dish.image_url:
         try:
             img_path = os.path.join(app.root_path, 'static', dish.image_url)
-            pdf.drawImage(img_path, 50, 640, width=200, height=150, preserveAspectRatio=True)
+            pdf.drawImage(img_path, 50, page_height - 330, width=250, height=250, preserveAspectRatio=True)
         except Exception as e:
             pdf.setFont("DejaVuSans", 10)
             pdf.drawString(50, 770, f"[Ошибка загрузки изображения: {str(e)}]")
@@ -556,44 +566,76 @@ def download_dish_pdf(dish_id):
     soup = BeautifulSoup(dish.preparation_steps, "html.parser")
     ol_items = soup.find_all('li')
 
-    y_position = 600
+    y_position = 480
     pdf.setFont("DejaVuSans", 10)
 
     for idx, li in enumerate(ol_items, start=1):
         line = f"{idx}. {li.get_text(strip=True)}"
-        pdf.drawString(50, y_position, line)
-        y_position -= 15
-        if y_position < 50:
-            pdf.showPage()
-            y_position = 1000
+        
+        # Разбиваем текст на строки, чтобы он не выходил за правую границу
+        wrapped_lines = simpleSplit(line, "DejaVuSans", 10, page_width - left_margin - right_margin)
+    
+        for wrapped_line in wrapped_lines:
+            # Рисуем строку
+            pdf.drawString(left_margin, y_position, wrapped_line)
+            y_position -= line_height
+
+            # Если достигли нижней границы страницы
+            if y_position < 50:
+                pdf.showPage()  # Создаем новую страницу
+                pdf.setFont("DejaVuSans", 10)  # Устанавливаем шрифт для новой страницы
+                y_position = page_height - 50  # Сбрасываем y_position
 
     # Ингредиенты
     y_position = 500
+   
     pdf.setFont("DejaVuSans", 12)
-    pdf.drawString(50, y_position, "Ингредиенты:")
-    y_position -= 20
-    pdf.setFont("DejaVuSans", 10)
+    pdf.drawString(50, y_position, "Способ приготовления:")
+    
 
+    data = [["Название продукта", "Ед. изм.", "Вес"]]  # Заголовки
+    pdf.setFont("DejaVuSans", 12)
+    # Добавляем данные о продуктах
     for dish_product in dish.dish_products:
         product = dish_product.product
-        line = f"{product.name} - {dish_product.quantity} {product.measurement.name}"
-        pdf.drawString(50, y_position, line)
-        y_position -= 15
-        if y_position < 50:
-            pdf.showPage()
-            y_position = 800
+        data.append([
+            product.name,
+            product.measurement.name,
+            f"{dish_product.quantity:.2f}"
+        ])
+    pdf.setFont("DejaVuSans", 12)
+    # Настраиваем стиль таблицы
+    table = Table(data, colWidths=[170, 60, 40])  # ширина колонок
+    table.setStyle(TableStyle([
+    # Стиль заголовков
+    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Фон заголовка
+    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Цвет текста заголовка
+    ('FONTNAME', (0, 0), (-1, 0), 'DejaVuSans-Bold'),  # Жирный шрифт для заголовка
+    ('FONTSIZE', (0, 0), (-1, 0), 10),  # Размер шрифта для заголовка
+    
+    # Стиль данных
+    ('FONTNAME', (0, 1), (-1, -1), 'DejaVuSans'),  # Обычный шрифт для данных
+    ('FONTSIZE', (0, 1), (-1, -1), 10),  # Размер шрифта для данных
+    ('BACKGROUND', (0, 1), (-1, -1), colors.white),  # Фон данных
+    ('GRID', (0, 0), (-1, -1), 1, colors.black)  # Сетка таблицы
+]))
+
+    # Рисуем таблицу в PDF
+    table.wrapOn(pdf, 320, page_height)
+    table.drawOn(pdf, 320, page_height - 265)
 
     # Генерация QR-кода
     qr_url = f"{request.host_url}dishes/{dish_id}"
     qr = qrcode.make(qr_url)  # Создаем QR-код
     
+    y_position = 705
     # Сохраняем QR-код в временный файл
     with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_qr_file:
         qr.save(temp_qr_file, format="PNG")
         temp_qr_file.close()  # Закрываем файл, чтобы можно было использовать его путь
         
         # Добавляем QR-код в PDF
-        pdf.drawImage(temp_qr_file.name, x_margin + 400, y_position - 100, width=100, height=100)
+        pdf.drawImage(temp_qr_file.name, x_margin + 505, y_position + 95, width=40, height=40)
         
         # Удаляем временный файл после использования
         os.remove(temp_qr_file.name)       
