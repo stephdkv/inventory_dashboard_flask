@@ -1,30 +1,27 @@
+from bs4 import BeautifulSoup
+from datetime import datetime
+from decorators import role_required
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response
-from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, UserProductLocation, DishProduct
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
-from decorators import role_required
-from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
-from datetime import datetime
+from html.parser import HTMLParser
+from io import BytesIO
 from load_data_from_excel import load_data_from_excel
+from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, UserProductLocation, DishProduct
+import os
+import pandas as pd
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import simpleSplit
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Table, TableStyle
-from reportlab.platypus import SimpleDocTemplate
-from reportlab.lib.utils import simpleSplit
-from reportlab.lib import colors
-from io import BytesIO
-from urllib.parse import quote
-from html.parser import HTMLParser
-from bs4 import BeautifulSoup
 import qrcode
 import tempfile
-
-
-import pandas as pd
-import os
+from urllib.parse import quote
+from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -527,9 +524,6 @@ def dishes():
 def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     return render_template('dish_detail.html', dish=dish)
-
-from io import BytesIO
-from flask import make_response
 
 @app.route('/dishes/<int:dish_id>/download', methods=['GET'])
 def download_dish_pdf(dish_id):
