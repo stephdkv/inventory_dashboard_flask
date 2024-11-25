@@ -38,6 +38,7 @@ pypdf==5.1.0
 pyphen==0.15.0
 python-bidi==0.6.3
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 pytz==2024.1
 PyYAML==6.0.2
 qrcode==8.0

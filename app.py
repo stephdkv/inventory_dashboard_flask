@@ -22,10 +22,12 @@ import tempfile
 from urllib.parse import quote
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.secret_key = 'sfkmskjnkj2kj4n234j'
+load_dotenv()
+app.secret_key = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
