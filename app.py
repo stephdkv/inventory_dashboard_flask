@@ -663,31 +663,22 @@ def add_dish():
     if request.method == 'POST':
         name = request.form.get('name')
         image_file = request.files.get('image')
-        print(image_file)  # Поле для изображения
+        # Поле для изображения
         image_path = None
         if image_file:
             filename = secure_filename(image_file.filename)
-            print(filename)
             relative_image_path = f"uploads/{filename}"
-            print(relative_image_path)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            print(image_path)
             image_file.save(image_path)
-            print(image_path)
 
         # Обработка загруженного видео
         video_file = request.files.get('video')
-        print(video_file)
         video_path = None
         if video_file:
             filename = secure_filename(video_file.filename)
-            print(filename)
             relative_video_path = f"uploads/{filename}"
-            print(relative_video_path)
             video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            print(video_path)
             video_file.save(video_path)
-            print(video_file)
 
         preparation_steps = request.form.get('preparation_steps')
         
