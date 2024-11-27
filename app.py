@@ -170,6 +170,7 @@ def home_page():
     return f'Привет, {current_user.username}! Это домашняя страница.'
 
 @app.route('/products', methods=['GET', 'POST'])
+@login_required
 def products_page():
     establishment_id = current_user.establishment_id
     locations = Location.query.filter_by(establishment_id=establishment_id).all()
@@ -198,6 +199,7 @@ def products_page():
     return render_template('products.html', products=products, locations=locations, measurements=measurements, username=username, role=role, establishment_name=establishment_name)
 
 @app.route('/locations', methods=['GET', 'POST'])
+@login_required
 def locations_page():
     username = current_user.username
     role = current_user.role.capitalize()
@@ -218,6 +220,7 @@ def locations_page():
     return render_template('locations.html', locations=locations, username=username, role=role, establishment_name=establishment_name)
 
 @app.route('/suppliers', methods=['GET', 'POST'])
+@login_required
 def suppliers_page():
     username = current_user.username
     role = current_user.role.capitalize()
@@ -238,6 +241,7 @@ def suppliers_page():
     return render_template('suppliers.html', suppliers=suppliers, establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/products/<int:product_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     locations = Location.query.all()
@@ -260,6 +264,7 @@ def edit_product(product_id):
     return render_template('edit_product.html', product=product, locations=locations, measurements=measurements, establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/locations/<int:location_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_location(location_id):
     location = Location.query.get_or_404(location_id)
     username = current_user.username
@@ -277,6 +282,7 @@ def edit_location(location_id):
     return render_template('edit_location.html', location=location,  establishment_name=establishment_name,  username=username, role=role)
 
 @app.route('/suppliers/<int:supplier_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
     products = Product.query.all()
@@ -291,6 +297,7 @@ def edit_supplier(supplier_id):
 
 
 @app.route('/products/<int:product_id>/delete', methods=['POST'])
+@login_required
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -298,6 +305,7 @@ def delete_product(product_id):
     return redirect(url_for('products_page'))
 
 @app.route('/locations/<int:location_id>/delete', methods=['POST'])
+@login_required
 def delete_location(location_id):
     location = Location.query.get_or_404(location_id)
 
@@ -314,6 +322,7 @@ def delete_location(location_id):
     return redirect(url_for('locations_page'))
 
 @app.route('/suppliers/<int:supplier_id>/delete', methods=['POST'])
+@login_required
 def delete_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
 
@@ -329,6 +338,7 @@ def delete_supplier(supplier_id):
     return redirect(url_for('suppliers_page'))
 
 @app.route('/supplier/<int:supplier_id>/product/<int:product_id>/remove', methods=['POST'])
+@login_required
 def remove_product_from_supplier(supplier_id, product_id):
     supplier = Supplier.query.get(supplier_id)
     product = Product.query.get(product_id)
@@ -349,6 +359,7 @@ def remove_product_from_supplier(supplier_id, product_id):
 
 
 @app.route('/inventory', methods=['GET', 'POST'])
+@login_required
 def inventory_page():
     establishment_id = current_user.establishment_id
     user_id = current_user.id
@@ -398,6 +409,7 @@ def download_file(file_name):
         return redirect(url_for('inventory_page'))
 
 @app.route('/download_order', methods=['POST'])
+@login_required
 def download_order():
     supplier_id = request.form.get('supplier_id')
     supplier = Supplier.query.get(supplier_id)
@@ -437,6 +449,7 @@ def download_order():
     return redirect(url_for('supplier_page'))
 
 @app.route('/suppliers_orders', methods=['GET'])
+@login_required
 def supplier_page():
     suppliers = Supplier.query.all()
     current_date = datetime.now().strftime('%d.%m')
@@ -450,6 +463,7 @@ def supplier_page():
     return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date, establishment_name=establishment_name, username=username, role=role)
 
 @app.route('/suppliers/<int:supplier_id>/add_product', methods=['GET', 'POST'])
+@login_required
 def add_product_to_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
     products = Product.query.group_by(Product.name).all()
@@ -468,6 +482,7 @@ def add_product_to_supplier(supplier_id):
     return render_template('add_product_to_supplier.html', supplier=supplier, products=products, measurements=measurements)
 
 @app.route('/suppliers/<int:supplier_id>/edit_product', methods=['GET', 'POST'])
+@login_required
 def edit_product_to_supplier(supplier_id):
     product = Product.query.get_or_404(supplier_id)
     supplier = Supplier.query.get_or_404(supplier_id)
@@ -492,6 +507,7 @@ def edit_product_to_supplier(supplier_id):
 
 
 @app.route('/orders', methods=['GET', 'POST'])
+@login_required
 def order_page():
     suppliers = Supplier.query.all()
 
@@ -518,16 +534,19 @@ def order_page():
 
 # Главная страница со списком блюд
 @app.route('/dishes', methods=['GET'])
+@login_required
 def dishes():
     dishes = Dish.query.all()
     return render_template('dishes.html', dishes=dishes)
 
 @app.route('/dishes/<int:dish_id>', methods=['GET'])
+@login_required
 def dish_detail(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     return render_template('dish_detail.html', dish=dish)
 
 @app.route('/dishes/<int:dish_id>/download', methods=['GET'])
+@login_required
 def download_dish_pdf(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     
@@ -656,6 +675,7 @@ def download_dish_pdf(dish_id):
 
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
+@login_required
 def add_dish():
     products = Product.query.group_by(Product.name).all()
     measurements = Measurement.query.all()
@@ -721,6 +741,7 @@ def add_dish():
 
 
 @app.route('/profile', methods=['GET', 'POST'])
+@login_required
 def profile_page():
     username = current_user.username
     role = current_user.role.capitalize()
