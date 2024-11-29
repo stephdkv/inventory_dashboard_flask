@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-from decorators import role_required
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response
+from decorators import role_required, user_details
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response, g
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
 from html.parser import HTMLParser
@@ -65,15 +65,9 @@ def index():
 
 @app.route('/user_list')
 @login_required
+@user_details
 @role_required('admin')  # Только администраторы могут видеть этот список
 def user_list():
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
     if request.method == 'POST':
         supplier_name = request.form.get('supplier')
         if supplier_name:
@@ -83,7 +77,7 @@ def user_list():
             return redirect(url_for('suppliers_page'))
     users = User.query.all()
     establishments = {1: 'Лукашевича', 2: 'Ленина'}  
-    return render_template('user_list.html', users=users, establishments=establishments, establishment_name=establishment_name, role=role, username=username )
+    return render_template('user_list.html', users=users, establishments=establishments, establishment_name=g.establishment_name, role=g.role, username=g.username )
 
 @app.route('/set_role/<int:user_id>', methods=['POST'])
 @login_required
@@ -170,19 +164,11 @@ def home_page():
     return f'Привет, {current_user.username}! Это домашняя страница.'
 
 @app.route('/products', methods=['GET', 'POST'])
+@user_details
 @login_required
 def products_page():
-    establishment_id = current_user.establishment_id
-    locations = Location.query.filter_by(establishment_id=establishment_id).all()
+    locations = Location.query.filter_by(establishment_id=g.establishment_id).all()
     measurements = Measurement.query.all()
-    username = current_user.username
-    role = current_user.role.capitalize()
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-    
-
     if request.method == 'POST':
         product_name = request.form.get('product')
         location_id = request.form.get('location')
@@ -190,45 +176,32 @@ def products_page():
         
 
         if product_name and location_id and measurement_id:
-            product = Product(name=product_name, location_id=location_id, measurement_id=measurement_id, establishment_id=establishment_id)
+            product = Product(name=product_name, location_id=location_id, measurement_id=measurement_id, establishment_id=g.establishment_id)
             db.session.add(product)
             db.session.commit()
             return redirect(url_for('products_page'))
 
     products = Product.query.all()
-    return render_template('products.html', products=products, locations=locations, measurements=measurements, username=username, role=role, establishment_name=establishment_name)
+    return render_template('products.html', products=products, locations=locations, measurements=measurements, username=g.username, role=g.role, establishment_name=g.establishment_name)
 
 @app.route('/locations', methods=['GET', 'POST'])
 @login_required
+@user_details
 def locations_page():
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-
     if request.method == 'POST':
         location_name = request.form.get('location')
         if location_name:
-            location = Location(name=location_name, establishment_id=establishment_id)
+            location = Location(name=location_name, establishment_id=g.establishment_id)
             db.session.add(location)
             db.session.commit()
             return redirect(url_for('locations_page'))
-    locations = Location.query.filter_by(establishment_id=establishment_id).all()
-    return render_template('locations.html', locations=locations, username=username, role=role, establishment_name=establishment_name)
+    locations = Location.query.filter_by(establishment_id=g.establishment_id).all()
+    return render_template('locations.html', locations=locations, username=g.username, role=g.role, establishment_name=g.establishment_name)
 
 @app.route('/suppliers', methods=['GET', 'POST'])
 @login_required
+@user_details
 def suppliers_page():
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
     if request.method == 'POST':
         supplier_name = request.form.get('supplier')
         if supplier_name:
@@ -238,22 +211,15 @@ def suppliers_page():
             return redirect(url_for('suppliers_page'))
 
     suppliers = Supplier.query.all()
-    return render_template('suppliers.html', suppliers=suppliers, establishment_name=establishment_name,  username=username, role=role)
+    return render_template('suppliers.html', suppliers=suppliers, establishment_name=g.establishment_name,  username=g.username, role=g.role)
 
 @app.route('/products/<int:product_id>/edit', methods=['GET', 'POST'])
 @login_required
+@user_details
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     locations = Location.query.all()
     measurements = Measurement.query.all()
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-
     if request.method == 'POST':
         product.name = request.form.get('product')
         product.location_id = request.form.get('location')
@@ -261,39 +227,32 @@ def edit_product(product_id):
         db.session.commit()
         return redirect(url_for('products_page'))
 
-    return render_template('edit_product.html', product=product, locations=locations, measurements=measurements, establishment_name=establishment_name,  username=username, role=role)
+    return render_template('edit_product.html', product=product, locations=locations, measurements=measurements, establishment_name=g.establishment_name,  username=g.username, role=g.role)
 
 @app.route('/locations/<int:location_id>/edit', methods=['GET', 'POST'])
 @login_required
+@user_details
 def edit_location(location_id):
     location = Location.query.get_or_404(location_id)
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-
     if request.method == 'POST':
         db.session.commit()
         return redirect(url_for('locations_page'))
 
-    return render_template('edit_location.html', location=location,  establishment_name=establishment_name,  username=username, role=role)
+    return render_template('edit_location.html', location=location,  establishment_name=g.establishment_name,  username=g.username, role=g.role)
 
 @app.route('/suppliers/<int:supplier_id>/edit', methods=['GET', 'POST'])
 @login_required
+@user_details
 def edit_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
     products = Product.query.all()
-
     if request.method == 'POST':
         product_ids = request.form.getlist('products')
         supplier.products = Product.query.filter(Product.id.in_(product_ids)).all()
         db.session.commit()
         return redirect(url_for('suppliers_page'))
 
-    return render_template('edit_supplier.html', supplier=supplier, products=products)
+    return render_template('edit_supplier.html', supplier=supplier, products=products, establishment_name=g.establishment_name, username=g.username, role=g.role )
 
 
 @app.route('/products/<int:product_id>/delete', methods=['POST'])
@@ -360,20 +319,14 @@ def remove_product_from_supplier(supplier_id, product_id):
 
 @app.route('/inventory', methods=['GET', 'POST'])
 @login_required
+@user_details
 def inventory_page():
-    establishment_id = current_user.establishment_id
     user_id = current_user.id
     assigned_locations = UserProductLocation.query.filter_by(user_id=user_id).all()
     
     # Фильтруем уникальные локации и продукты
     locations = {assignment.location for assignment in assigned_locations}
     current_date = datetime.now().strftime('%d.%m.%y')
-    username = current_user.username
-    role = current_user.role.capitalize()
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
 
     if request.method == 'POST':
         data = []
@@ -389,13 +342,13 @@ def inventory_page():
                     })
 
         df = pd.DataFrame(data)
-        file_name = f'Инвентаризация_{establishment_name}_{current_date}_{user_id}.xlsx'
+        file_name = f'Инвентаризация_{g.establishment_name}_{current_date}_{user_id}.xlsx'
         file_path = os.path.join('static', file_name)
         df.to_excel(file_path, index=False)
 
         return redirect(url_for('download_file', file_name=file_name))
 
-    return render_template('inventory.html', locations=locations, current_date=current_date, establishment_name=establishment_name,  username=username, role=role)
+    return render_template('inventory.html', locations=locations, current_date=current_date, establishment_name=g.establishment_name,  username=g.username, role=g.role)
 
 @app.route('/download/<file_name>')
 @login_required
@@ -410,15 +363,10 @@ def download_file(file_name):
 
 @app.route('/download_order', methods=['POST'])
 @login_required
+@user_details
 def download_order():
     supplier_id = request.form.get('supplier_id')
     supplier = Supplier.query.get(supplier_id)
-    establishment_id = current_user.establishment_id
-    
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
     
     # Получаем текущую дату в формате ДД.ММ
     current_date = datetime.now().strftime('%d.%m')
@@ -435,7 +383,7 @@ def download_order():
 
     if data:
         # Генерируем имя файла с датой
-        file_name = f'Заявка_{supplier.name}_{establishment_name}_{current_date}.xlsx'
+        file_name = f'Заявка_{supplier.name}_{g.establishment_name}_{current_date}.xlsx'
         file_path = os.path.join('static', file_name)
 
         # Записываем данные в Excel
@@ -450,25 +398,19 @@ def download_order():
 
 @app.route('/suppliers_orders', methods=['GET'])
 @login_required
+@user_details
 def supplier_page():
     suppliers = Supplier.query.all()
     current_date = datetime.now().strftime('%d.%m')
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-    return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date, establishment_name=establishment_name, username=username, role=role)
+    return render_template('suppliers_orders.html', suppliers=suppliers, current_date=current_date, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
 @app.route('/suppliers/<int:supplier_id>/add_product', methods=['GET', 'POST'])
 @login_required
+@user_details
 def add_product_to_supplier(supplier_id):
     supplier = Supplier.query.get_or_404(supplier_id)
     products = Product.query.group_by(Product.name).all()
     measurements = Measurement.query.all()
-
     if request.method == 'POST':
         product_id = request.form.get('product')
         measurement_id = request.form.get('measurement')
@@ -479,10 +421,11 @@ def add_product_to_supplier(supplier_id):
             db.session.commit()
             return redirect(url_for('suppliers_page'))  # Перенаправляем на страницу поставщиков
 
-    return render_template('add_product_to_supplier.html', supplier=supplier, products=products, measurements=measurements)
+    return render_template('add_product_to_supplier.html', supplier=supplier, products=products, measurements=measurements, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
 @app.route('/suppliers/<int:supplier_id>/edit_product', methods=['GET', 'POST'])
 @login_required
+@user_details
 def edit_product_to_supplier(supplier_id):
     product = Product.query.get_or_404(supplier_id)
     supplier = Supplier.query.get_or_404(supplier_id)
@@ -502,7 +445,7 @@ def edit_product_to_supplier(supplier_id):
             db.session.commit()
             return redirect(url_for('suppliers_page'))  # Перенаправляем на страницу поставщиков
 
-    return render_template('edit_product_to_supplier.html',product=product, supplier=supplier, products=products, measurements=measurements)
+    return render_template('edit_product_to_supplier.html',product=product, supplier=supplier, products=products, measurements=measurements, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
 
 
@@ -742,16 +685,9 @@ def add_dish():
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def profile_page():
-    username = current_user.username
-    role = current_user.role.capitalize()
-    establishment_id = current_user.establishment_id
-    if establishment_id == 1:
-        establishment_name = "Лукашевича"
-    else:
-        establishment_name = 'Ленина'
-    
-    return render_template('user_profile.html', username=username, role=role, establishment_name=establishment_name)
+@user_details
+def profile_page():    
+    return render_template('user_profile.html', username=g.username, role=g.role, establishment_name=g.establishment_name)
 
 
 @app.route('/assign_inventory/<int:user_id>', methods=['GET', 'POST'])
