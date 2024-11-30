@@ -99,8 +99,6 @@ def set_role(user_id):
     
     return redirect(url_for('user_list'))  # Перенаправляем на список пользователей или другую страницу
 
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -313,10 +311,6 @@ def remove_product_from_supplier(supplier_id, product_id):
     # Возвращаемся на страницу поставщика
     return redirect(url_for('suppliers_page', supplier_id=supplier_id))
 
-
-
-
-
 @app.route('/inventory', methods=['GET', 'POST'])
 @login_required
 @user_details
@@ -446,8 +440,6 @@ def edit_product_to_supplier(supplier_id):
             return redirect(url_for('suppliers_page'))  # Перенаправляем на страницу поставщиков
 
     return render_template('edit_product_to_supplier.html',product=product, supplier=supplier, products=products, measurements=measurements, establishment_name=g.establishment_name, username=g.username, role=g.role)
-
-
 
 @app.route('/orders', methods=['GET', 'POST'])
 @login_required
@@ -615,7 +607,6 @@ def download_dish_pdf(dish_id):
 
     return response
 
-
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
 @login_required
@@ -681,23 +672,20 @@ def add_dish():
     
     return render_template('add_dish.html', products=products, measurements=measurements)
 
-
-
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 @user_details
 def profile_page():    
     return render_template('user_profile.html', username=g.username, role=g.role, establishment_name=g.establishment_name)
 
-
 @app.route('/assign_inventory/<int:user_id>', methods=['GET', 'POST'])
 @login_required
+@user_details
 def assign_inventory(user_id):
     user = User.query.get_or_404(user_id)
     
     # Получаем список локаций и продуктов для текущего заведения пользователя
-    establishment_id = current_user.establishment_id
-    locations = Location.query.filter_by(establishment_id=establishment_id).all()
+    locations = Location.query.filter_by(establishment_id=g.establishment_id).all()
     
     
     if request.method == 'POST':
@@ -716,9 +704,7 @@ def assign_inventory(user_id):
         flash('Назначения успешно обновлены', 'success')
         return redirect(url_for('products_page'))  # Перенаправляем на панель администратора
 
-    return render_template('assign_inventory.html', user=user, locations=locations)
-
-
+    return render_template('assign_inventory.html', user=user, locations=locations, username=g.username, role=g.role, establishment_name=g.establishment_name )
 
 if __name__ == '__main__':
     app.run(debug=True)
