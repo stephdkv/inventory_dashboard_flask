@@ -2052,6 +2052,12 @@ figcaption {
   box-shadow: 0 4px 24px #080f2561;
 }
 
+.form-products {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
 .sales-home-hero-image-right {
   border: 0.6px solid #333745;
   border-radius: 16px;
@@ -2623,6 +2629,18 @@ figcaption {
     max-width: 480px;
     padding-top: 80px;
     padding-bottom: 80px;
+  }
+
+  .form-products {
+    display: block;
+  }
+
+  .form-padding-top {
+    padding-top: 10px;
+  }
+
+  .small-dropdown-toggle {
+    width: 172.67px;
   }
 
   .grid-4-columns.pricing-table {
