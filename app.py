@@ -57,6 +57,12 @@ class HTMLCleaner(HTMLParser):
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+# Обработчик ошибки 404
+@app.errorhandler(404)
+@user_details
+def page_not_found(e):
+    # Можно отрендерить 404.html или вернуть текст
+    return render_template('404.html', establishment_name=g.establishment_name, role=g.role, username=g.username), 404
 
 @app.route('/')
 def index():
