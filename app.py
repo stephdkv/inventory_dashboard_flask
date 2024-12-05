@@ -57,6 +57,7 @@ class HTMLCleaner(HTMLParser):
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+
 # Обработчик ошибки 404
 @app.errorhandler(404)
 @user_details

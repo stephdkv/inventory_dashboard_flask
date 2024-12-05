@@ -26,14 +26,7 @@
                       <div class="text-300 medium color-neutral-100">
                         Добавить продукт для поставщика {{ supplier.name }} :
                       </div>
-                      <form
-                        method="POST"
-                        style="
-                          display: flex;
-                          justify-content: space-between;
-                          gap: 20px;
-                        "
-                      >
+                      <form method="POST" class="form-products">
                         <div
                           data-hover="true"
                           data-delay="0"
@@ -57,7 +50,7 @@
                         <div
                           data-hover="true"
                           data-delay="0"
-                          class="mg-sides-0 position-relative---z-index-1 w-dropdown"
+                          class="mg-sides-0 position-relative---z-index-1 w-dropdown form-padding-top"
                         >
                           <select
                             name="measurement"
@@ -79,7 +72,7 @@
                           data-hover="true"
                           data-delay="0"
                           data-w-id="9cc462d8-bb30-3faf-01e2-89a59eb05ad4"
-                          class="mg-sides-0 position-relative---z-index-1 w-dropdown"
+                          class="mg-sides-0 position-relative---z-index-1 w-dropdown form-padding-top"
                         >
                           <button
                             class="btn-primary small w-inline-block"
@@ -90,7 +83,7 @@
                         </div>
                         <a
                           href="{{ url_for('suppliers_page') }}"
-                          class="btn-primary w-inline-block"
+                          class="btn-primary w-inline-block form-margin-top"
                         >
                           <div class="flex-horizontal gap-column-6px">
                             <div>Назад</div>

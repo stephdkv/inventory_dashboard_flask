@@ -2639,6 +2639,10 @@ figcaption {
     padding-top: 10px;
   }
 
+  .form-margin-top {
+    margin-top: 10px;
+  }
+
   .small-dropdown-toggle {
     width: 172.67px;
   }
