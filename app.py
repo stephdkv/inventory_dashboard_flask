@@ -4,7 +4,6 @@ from decorators import role_required, user_details
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response, g
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegistrationForm
-from html.parser import HTMLParser
 from io import BytesIO
 from load_data_from_excel import load_data_from_excel
 from models import db, Product, Location, Measurement, add_default_measurements, Supplier, User, Dish, UserProductLocation, DishProduct
@@ -42,17 +41,6 @@ with app.app_context():
     add_default_measurements()
     #file_path = 'inventory 3.xlsx'
     #load_data_from_excel(file_path)
-
-class HTMLCleaner(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.text = []
-
-    def handle_data(self, data):
-        self.text.append(data)
-
-    def get_clean_text(self):
-        return ''.join(self.text)
 
 @login_manager.user_loader
 def load_user(user_id):
