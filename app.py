@@ -436,31 +436,6 @@ def edit_product_to_supplier(supplier_id):
 
     return render_template('edit_product_to_supplier.html',product=product, supplier=supplier, products=products, measurements=measurements, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
-@app.route('/orders', methods=['GET', 'POST'])
-@login_required
-def order_page():
-    suppliers = Supplier.query.all()
-
-    if request.method == 'POST':
-        data = []
-        for supplier in suppliers:
-            for product in supplier.products:
-                quantity = request.form.get(f'quantity_{supplier.id}_{product.id}')
-                if quantity:
-                    data.append({
-                        'Supplier': supplier.name,
-                        'Product': product.name,
-                        'Quantity': float(quantity)
-                    })
-
-        # Сохранение данных в Excel
-        df = pd.DataFrame(data)
-        file_path = os.path.join('static', 'orders.xlsx')
-        df.to_excel(file_path, index=False)
-
-        return redirect(url_for('order_page'))
-
-    return render_template('order_form.html', suppliers=suppliers)
 
 # Главная страница со списком блюд
 @app.route('/dishes', methods=['GET'])
