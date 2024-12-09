@@ -157,8 +157,8 @@ def home_page():
     return f'Привет, {current_user.username}! Это домашняя страница.'
 
 @app.route('/products', methods=['GET', 'POST'])
-@user_details
 @login_required
+@user_details
 def products_page():
     locations = Location.query.filter_by(establishment_id=g.establishment_id).all()
     measurements = Measurement.query.all()
