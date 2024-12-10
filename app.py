@@ -39,7 +39,7 @@ pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
 with app.app_context():
     db.create_all()
     add_default_measurements()
-    #file_path = 'inventory 3.xlsx'
+    #file_path = 'inv1.xlsx'
     #load_data_from_excel(file_path)
 
 @login_manager.user_loader

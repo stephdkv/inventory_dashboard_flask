@@ -13,9 +13,9 @@ def load_data_from_excel(file_path):
     
     for index, row in data.iterrows():
         # Извлекаем данные из строки
-        product_name = row['Product Name']
-        location_name = row['Location']
-        measurement_name = row['Measurement']
+        product_name = row['Название']
+        location_name = row['Расположение']
+        measurement_name = row['Ед. изм.']
         
         
         # Находим или создаем локацию по имени и establishment_id
