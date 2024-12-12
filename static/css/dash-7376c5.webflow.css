@@ -1834,6 +1834,9 @@ figcaption {
   padding: 12px 28px;
   display: grid;
 }
+.recent-orders-table-row-nongrid {
+  grid-template-columns: 1fr;
+}
 
 .recent-orders-table-row.table-header {
   min-height: 28px;
@@ -2535,6 +2538,9 @@ figcaption {
   .recent-orders-table-row {
     grid-template-columns: 1fr 1fr 0.6fr 0.6fr;
   }
+  .recent-orders-table-row-nongrid {
+    grid-template-columns: 1fr;
+  }
 
   .dashboard-main-content.utility-page-main-content {
     flex-direction: column;
@@ -2760,10 +2766,6 @@ figcaption {
     font-size: 180px;
   }
 
-  .hidden-on-mbl {
-    display: none;
-  }
-
   .position-relative---z-index-1.logo-and-icon-mobile-container {
     padding-left: 20px;
   }
@@ -2807,6 +2809,9 @@ figcaption {
     grid-template-columns: 0.6fr 1fr 0.6fr 0.6fr;
     padding-left: 24px;
     padding-right: 24px;
+  }
+  .recent-orders-table-row-nongrid {
+    grid-template-columns: 1fr;
   }
 
   .dashboard-footer-wrapper {
