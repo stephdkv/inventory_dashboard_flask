@@ -2653,6 +2653,10 @@ figcaption {
     width: 172.67px;
   }
 
+  .paragraph-small-center {
+    justify-self: center;
+  }
+
   .grid-4-columns.pricing-table {
     grid-template-columns: 1fr;
   }
