@@ -674,7 +674,14 @@ def assign_inventory(user_id):
         flash('Назначения успешно обновлены', 'success')
         return redirect(url_for('products_page'))  # Перенаправляем на панель администратора
 
-    return render_template('assign_inventory.html', user=user, locations=locations, username=g.username, role=g.role, establishment_name=g.establishment_name )
+    return render_template('assign_inventory.html', user=user, locations=locations, username=g.username, role=g.role, establishment_name=g.establishment_name)
+
+@app.route('/assign_inventory', methods=['GET', 'POST'])
+@login_required
+@user_details
+def assign_inventory_user_list():
+    users = User.query.all() 
+    return render_template('assign_inventory_list.html', users=users, username=g.username, role=g.role, establishment_name=g.establishment_name)
 
 if __name__ == '__main__':
     app.run(debug=True)

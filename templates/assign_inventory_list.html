@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 23 2024 14:35:36 GMT+0000 (Coordinated Universal Time)  -->
+<html
+  data-wf-page="67190835fb378f6f7e1d5e41"
+  data-wf-site="67190834fb378f6f7e1d5d55"
+>
+  <head>
+    <meta charset="utf-8" />
+    <title>Доступ к инвентаризации</title>
+    {% include 'meta.html' %}
+  </head>
+  <body>
+    <div style="opacity: 0" class="page-wrapper">
+      {% include 'sidebar.html' %}
+      <div class="dashboard-main-section">
+        <div class="sidebar-spacer"></div>
+        <div class="dashboard-content">
+          <div class="dashboard-main-content">
+            <div class="container-default w-container">
+              <div id="w-node-_38b4a65e-7f82-4f13-d3fc-261e38ea4042-7e1d5e42">
+                <div
+                  id="w-node-_28f58b49-e289-bfad-3672-3ddb30359092-30359092"
+                  class="grid-1-column"
+                >
+                  <div class="card overflow-hidden">
+                    <div class="_2-items-wrap-container pd-32px---28px">
+                      <div class="text-300 medium color-neutral-100">
+                        Назначить доступ к инвентаризации
+                      </div>
+                    </div>
+                    <div class="table-main-container product-table">
+                      <div
+                        class="orders-status-table-row table-header"
+                        style="grid-template-columns: 2fr 1fr"
+                      >
+                        <div
+                          id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
+                          class="flex align-center gap-column-6px"
+                        >
+                          <img
+                            src="/static/images/component-settings-icon-dashdark-webflow-template.svg"
+                            loading="eager"
+                            alt=""
+                          />
+                          <div class="text-50 semibold color-neutral-100">
+                            Название Категории
+                          </div>
+                        </div>
+                        <div
+                          id="w-node-_514d0b39-e1cc-0d54-7c60-a69493a1f0b6-ba0dbefb"
+                        >
+                          <div
+                            id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
+                            class="flex align-center gap-column-6px"
+                          >
+                            <img
+                              src="/static/images/runtime-props-component-icon-dashdark-webflow-template.svg"
+                              loading="eager"
+                              alt=""
+                            />
+                            <div class="text-50 semibold color-neutral-100">
+                              Действия
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% for user in users %}
+                      <div
+                        class="orders-status-table-row"
+                        style="grid-template-columns: 2fr 1fr"
+                      >
+                        <div class="paragraph-small color-neutral-100">
+                          {{ user.username }}
+                        </div>
+
+                        <div
+                          id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346c-4528342e"
+                          class="flex align-center gap-column-6px"
+                          style="justify-self: end"
+                        >
+                          <a
+                            href="{{ url_for('assign_inventory', user_id=user.id) }}"
+                            style="text-decoration: none"
+                          >
+                            <div
+                              id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346d-4528342e"
+                              class="dashdark-custom-icon edit-icon"
+                            >
+                              
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% include 'footer.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="loading-bar-wrapper">
+      <div class="loading-bar"></div>
+    </div>
+
+    {% include 'script.html' %}
+    <script>
+      function toggleProducts(locationId) {
+        const productsTable = document.getElementById(`products-${locationId}`);
+        if (
+          productsTable.style.display === "none" ||
+          productsTable.style.display === ""
+        ) {
+          productsTable.style.display = "block"; // Показываем таблицу
+        } else {
+          productsTable.style.display = "none"; // Скрываем таблицу
+        }
+      }
+    </script>
+  </body>
+</html>
