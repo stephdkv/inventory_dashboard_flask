@@ -2459,6 +2459,9 @@ figcaption {
   .sidebar-logo-link.show-on-tablet {
     display: block;
   }
+  .sidebar-logo-link img {
+    max-height: 70px;
+  }
 
   .sidebar-menu-container {
     background-color: var(--neutral--800);
