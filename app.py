@@ -597,7 +597,7 @@ def add_dish():
 
         # Обработка загруженного видео
         video_file = request.files.get('video')
-        video_path = None
+        relative_video_path = None  
         if video_file:
             filename = secure_filename(video_file.filename)
             relative_video_path = f"uploads/{filename}"
