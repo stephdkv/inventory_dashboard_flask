@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
 
     establishment = SelectField('Заведение', choices=[('1', 'Лукашевича'), ('2', 'Ленина')], validators=[DataRequired()])
     
-    submit = SubmitField('Зарегистрироваться')
+    submit = SubmitField('Регистрация')
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired(), Length(min=4, max=25)])
