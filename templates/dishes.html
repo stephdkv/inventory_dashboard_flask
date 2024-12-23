@@ -1,22 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 23 2024 14:35:36 GMT+0000 (Coordinated Universal Time)  -->
+<html
+  data-wf-page="67190835fb378f6f7e1d5e41"
+  data-wf-site="67190834fb378f6f7e1d5d55"
+>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <title>Список блюд</title>
+    {% include 'meta.html' %}
   </head>
   <body>
-    <h1>Список блюд</h1>
+    <div style="opacity: 0" class="page-wrapper">
+      {% include 'sidebar.html' %}
+      <div class="dashboard-main-section">
+        <div class="sidebar-spacer"></div>
+        <div class="dashboard-content">
+          <div class="dashboard-main-content">
+            <div class="container-default w-container">
+              <h1>Список блюд:</h1>
 
-    <ul>
-      {% for dish in dishes %}
-      <li>
-        <a href="{{ url_for('dish_detail', dish_id=dish.id) }}"
-          >{{ dish.name }}</a
-        >
-      </li>
-      {% endfor %}
-    </ul>
-    <a href="{{ url_for('add_dish') }}">Добавить новое блюдо</a>
+              <div class="mg-bottom-24px">
+                <div class="grid-1-column">
+                  <div class="card overflow-hidden">
+                    <div class="_2-items-wrap-container pd-32px---28px"></div>
+                    <div class="table-main-container product-table">
+                      <div
+                        class="orders-status-table-row table-header"
+                        style="grid-template-columns: 2fr 1fr"
+                      >
+                        <div
+                          id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
+                          class="flex align-center gap-column-6px"
+                        >
+                          <img
+                            src="/static/images/component-settings-icon-dashdark-webflow-template.svg"
+                            loading="eager"
+                            alt=""
+                          />
+                          <div class="text-50 semibold color-neutral-100">
+                            Название Категории
+                          </div>
+                        </div>
+                        <div
+                          id="w-node-_514d0b39-e1cc-0d54-7c60-a69493a1f0b6-ba0dbefb"
+                        >
+                          <div
+                            id="w-node-_81082dec-aeb1-55cb-ca1b-8966496bda6e-496bda6e"
+                            class="flex align-center gap-column-6px"
+                          >
+                            <img
+                              src="/static/images/runtime-props-component-icon-dashdark-webflow-template.svg"
+                              loading="eager"
+                              alt=""
+                            />
+                            <div class="text-50 semibold color-neutral-100">
+                              Действия
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% for dish in dishes %}
+                      <div
+                        class="orders-status-table-row"
+                        style="grid-template-columns: 2fr 1fr"
+                      >
+                        <a
+                          href="{{ url_for('dish_detail', dish_id=dish.id) }}"
+                          style="text-decoration: none"
+                        >
+                          <div class="paragraph-small color-neutral-100">
+                            {{ dish.name }}
+                          </div>
+                        </a>
+
+                        <div
+                          id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346c-4528342e"
+                          class="flex align-center gap-column-6px"
+                          style="justify-self: end"
+                        >
+                          <a href="#" style="text-decoration: none">
+                            <div
+                              id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346d-4528342e"
+                              class="dashdark-custom-icon edit-icon"
+                            >
+                              
+                            </div>
+                          </a>
+                          <form
+                            action="#"
+                            style="text-decoration: none"
+                            method="POST"
+                          >
+                            <button
+                              id="w-node-ffe664cd-effd-fb9f-b3b2-a2624528346d-4528342e"
+                              class="dashdark-custom-icon delete-icon-product-supplier"
+                            >
+                              
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% include 'footer.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="loading-bar-wrapper">
+      <div class="loading-bar"></div>
+    </div>
+
+    {% include 'script.html' %}
   </body>
 </html>

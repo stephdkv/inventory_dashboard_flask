@@ -440,9 +440,10 @@ def edit_product_to_supplier(supplier_id):
 # Главная страница со списком блюд
 @app.route('/dishes', methods=['GET'])
 @login_required
+@user_details
 def dishes():
     dishes = Dish.query.all()
-    return render_template('dishes.html', dishes=dishes)
+    return render_template('dishes.html', dishes=dishes, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
 @app.route('/dishes/<int:dish_id>', methods=['GET'])
 @login_required
