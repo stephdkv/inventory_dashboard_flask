@@ -643,6 +643,17 @@ def add_dish():
     
     return render_template('add_dish.html', products=products, measurements=measurements)
 
+@app.route('/dishes/<int:dish_id>/delete', methods=['POST'])
+@login_required
+def delete_dish(dish_id):
+    dish = Dish.query.get_or_404(dish_id)
+    # Удаляем связанные записи
+    DishProduct.query.filter_by(dish_id=dish.id).delete()
+    # Удаляем сам объект Dish
+    db.session.delete(dish)
+    db.session.commit()
+    return redirect(url_for('dishes'))
+
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 @user_details

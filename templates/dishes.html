@@ -87,7 +87,7 @@
                             </div>
                           </a>
                           <form
-                            action="#"
+                            action="{{ url_for('delete_dish', dish_id=dish.id) }}"
                             style="text-decoration: none"
                             method="POST"
                           >
