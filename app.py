@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from counter import global_counter, get_next_counter_value
 from datetime import datetime
 from decorators import role_required, user_details
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, make_response, g
@@ -371,8 +372,9 @@ def download_order():
             })
 
     if data:
+        counter_value = get_next_counter_value()
         # Генерируем имя файла с датой
-        file_name = f'Заявка_{supplier.name}_{g.establishment_name}_{current_date}.xlsx'
+        file_name = f'Заявка_{supplier.name}_{g.establishment_name}_{current_date}_№{counter_value}.xlsx'
         file_path = os.path.join('static', file_name)
 
         # Записываем данные в Excel
