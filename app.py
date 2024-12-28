@@ -332,7 +332,8 @@ def inventory_page():
                     })
 
         df = pd.DataFrame(data)
-        file_name = f'Инвентаризация_{g.establishment_name}_{current_date}_{user_id}.xlsx'
+        counter_value = get_next_counter_value()
+        file_name = f'Инвентаризация_{g.establishment_name}_{current_date}_№{counter_value}.xlsx'
         file_path = os.path.join('static', file_name)
         df.to_excel(file_path, index=False)
 
