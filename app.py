@@ -584,6 +584,7 @@ def download_dish_pdf(dish_id):
 # Страница добавления нового блюда
 @app.route('/dishes/add', methods=['GET', 'POST'])
 @login_required
+@user_details
 def add_dish():
     products = Product.query.group_by(Product.name).all()
     measurements = Measurement.query.all()
@@ -644,7 +645,7 @@ def add_dish():
         db.session.commit()  # Сохраняем все изменения в базе данных
         return redirect(url_for('dishes'))
     
-    return render_template('add_dish.html', products=products, measurements=measurements)
+    return render_template('add_dish.html', products=products, measurements=measurements, establishment_name=g.establishment_name, username=g.username, role=g.role)
 
 @app.route('/dishes/<int:dish_id>/delete', methods=['POST'])
 @login_required

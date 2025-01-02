@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 23 2024 14:35:36 GMT+0000 (Coordinated Universal Time)  -->
+<html
+  data-wf-page="67190835fb378f6f7e1d5e41"
+  data-wf-site="67190834fb378f6f7e1d5d55"
+>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <title>Добавить блюдо</title>
     <script>
       // Функция для добавления нового поля продукта и количества
@@ -41,48 +45,98 @@
         height: 300, // Высота редактора
       });
     </script>
+    {% include 'meta.html' %}
   </head>
   <body>
-    <h1>Добавить новое блюдо</h1>
-    <form method="POST" enctype="multipart/form-data">
-      <label>Название блюда:</label>
-      <input type="text" name="name" required />
+    <div style="opacity: 0" class="page-wrapper">
+      {% include 'sidebar.html' %}
+      <div class="dashboard-main-section">
+        <div class="sidebar-spacer"></div>
+        <div class="dashboard-content">
+          <div class="dashboard-main-content">
+            <div class="container-default w-container">
+              <h1>Добавить блюд:</h1>
+              <div class="mg-bottom-24px">
+                <div class="grid-1-column">
+                  <div class="card overflow-hidden">
+                    <div class="table-main-container product-table">
+                      <h1 class="display-4 mg-bottom-4px">
+                        Добавить новое блюдо
+                      </h1>
+                      <form method="POST" enctype="multipart/form-data">
+                        <label>Название блюда:</label>
+                        <input
+                          class="input w-password-page w-input1"
+                          type="text"
+                          placeholder="Введите название..."
+                          name="name"
+                          required
+                          style="display: inline; width: auto; min-height: 30px"
+                        />
 
-      <label>Изображение:</label>
-      <input type="file" name="image" accept="image/*" />
+                        <label>Изображение:</label>
+                        <input type="file" name="image" accept="image/*" />
 
-      <label>Видео (опционально):</label>
-      <input type="file" name="video" accept="video/*" />
+                        <label>Видео (опционально):</label>
+                        <input type="file" name="video" accept="video/*" />
 
-      <label for="preparation_steps">Технология приготовления:</label>
-      <textarea id="preparation_steps" name="preparation_steps"></textarea>
+                        <label for="preparation_steps"
+                          >Технология приготовления:</label
+                        >
+                        <textarea
+                          id="preparation_steps"
+                          name="preparation_steps"
+                        ></textarea>
 
-      <h3>Продукты</h3>
-      <div id="products-container">
-        <div>
-          <select name="product_id" required>
-            <option value="" disabled selected>Выберите продукт</option>
-            {% for product in products %}
-            <option value="{{ product.id }}">{{ product.name }}</option>
-            {% endfor %}
-          </select>
-          <input
-            type="number"
-            name="quantity"
-            step="0.001"
-            min="0"
-            placeholder="Количество"
-            required
-          />
+                        <h3>Продукты</h3>
+                        <div id="products-container">
+                          <div>
+                            <select
+                              name="product_id"
+                              required
+                              class="small-dropdown-toggle w-dropdown-toggle"
+                            >
+                              <option value="" disabled selected>
+                                Выберите продукт
+                              </option>
+                              {% for product in products %}
+                              <option value="{{ product.id }}">
+                                {{ product.name }}
+                              </option>
+                              {% endfor %}
+                            </select>
+                            <input
+                              type="number"
+                              name="quantity"
+                              step="0.001"
+                              min="0"
+                              placeholder="Количество"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <button type="button" onclick="addProductField()">
+                          Добавить продукт
+                        </button>
+                        <br /><br />
+
+                        <button type="submit">Добавить блюдо</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% include 'footer.html' %}
         </div>
       </div>
+    </div>
+    <div class="loading-bar-wrapper">
+      <div class="loading-bar"></div>
+    </div>
 
-      <button type="button" onclick="addProductField()">
-        Добавить продукт
-      </button>
-      <br /><br />
-
-      <button type="submit">Добавить блюдо</button>
-    </form>
+    {% include 'script.html' %}
   </body>
 </html>
