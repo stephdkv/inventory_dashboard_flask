@@ -64,6 +64,12 @@
                         class="orders-status-table-row"
                         style="grid-template-columns: 2fr 1fr"
                       >
+                        <img
+                          src="{{ url_for('static', filename=dish.image_url) }}"
+                          alt="{{ dish.name }}"
+                          loading="eager"
+                          class="max-w-40px border-radius-6px"
+                        />
                         <a
                           href="{{ url_for('dish_detail', dish_id=dish.id) }}"
                           style="text-decoration: none"
